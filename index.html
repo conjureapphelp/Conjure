@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conjure</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+[data-theme="midnight-gold"]{--ink:#0c0a0e;--gold:#c9a84c;--rose:#b05070;--violet:#7b5ea7;--gp:rgba(201,168,76,0.12);--gg:rgba(201,168,76,0.22);--rp:rgba(176,80,112,0.10);--rg:rgba(176,80,112,0.22);--smoke:#c8bfb0;--bdr:rgba(201,168,76,0.15);--brose:rgba(176,80,112,0.2);--surface:#14101a;--parchment:#f2ece0}
+[data-theme="dark-rose"]{--ink:#0e080b;--gold:#d4788a;--rose:#e8a0b0;--violet:#9b6070;--gp:rgba(212,120,138,0.12);--gg:rgba(212,120,138,0.25);--rp:rgba(232,160,176,0.10);--rg:rgba(232,160,176,0.22);--smoke:#cfc0c4;--bdr:rgba(212,120,138,0.15);--brose:rgba(232,160,176,0.2);--surface:#1a0f12;--parchment:#f0e8ea}
+[data-theme="mystic-violet"]{--ink:#09080e;--gold:#a08bd0;--rose:#c090d8;--violet:#d0aaff;--gp:rgba(160,139,208,0.12);--gg:rgba(160,139,208,0.25);--rp:rgba(192,144,216,0.10);--rg:rgba(192,144,216,0.22);--smoke:#c0b8d0;--bdr:rgba(160,139,208,0.18);--brose:rgba(192,144,216,0.2);--surface:#120f1c;--parchment:#eceaf5}
+[data-theme="forest"]{--ink:#080d0a;--gold:#7ab87a;--rose:#a8cc8a;--violet:#60a878;--gp:rgba(122,184,122,0.12);--gg:rgba(122,184,122,0.22);--rp:rgba(168,204,138,0.10);--rg:rgba(168,204,138,0.2);--smoke:#b8c8b4;--bdr:rgba(122,184,122,0.15);--brose:rgba(168,204,138,0.2);--surface:#0f1812;--parchment:#e8f0e4}
+[data-theme="ocean"]{--ink:#070c10;--gold:#5ba8c4;--rose:#80c8d8;--violet:#4888b0;--gp:rgba(91,168,196,0.12);--gg:rgba(91,168,196,0.22);--rp:rgba(128,200,216,0.10);--rg:rgba(128,200,216,0.2);--smoke:#b0c4d0;--bdr:rgba(91,168,196,0.15);--brose:rgba(128,200,216,0.2);--surface:#0d1620;--parchment:#e4eef5}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh}
+body{background:var(--ink);color:var(--parchment);font-family:'Cormorant Garamond',serif;overflow-x:hidden;transition:background 0.4s,color 0.4s}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 25% 15%,rgba(201,168,76,0.07) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 80% 85%,rgba(176,80,112,0.06) 0%,transparent 60%),radial-gradient(100% 100% at 50% 50%,#181220 0%,#0c0a0e 100%);pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;opacity:0.4;z-index:0}
+
+/* ONBOARDING */
+.ob-bg{position:fixed;inset:0;background:var(--ink);z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;transition:opacity 0.6s}
+.ob-bg.out{opacity:0;pointer-events:none}
+.ob-box{max-width:480px;width:100%;text-align:center}
+.ob-sigil{width:58px;height:58px;margin:0 auto 24px;animation:spinR 20s linear infinite}
+.ob-steps{display:flex;justify-content:center;gap:8px;margin-bottom:32px}
+.ob-dot{width:6px;height:6px;border-radius:50%;background:rgba(201,168,76,0.25);transition:all 0.3s}
+.ob-dot.on{background:var(--gold);width:18px;border-radius:3px}
+.ob-slide{display:none;animation:fadeUp 0.5s ease both}
+.ob-slide.on{display:block}
+.ob-icon{font-size:2.6rem;margin-bottom:16px}
+.ob-title{font-size:clamp(1.7rem,5vw,2.4rem);font-weight:300;letter-spacing:0.12em;color:var(--gold);margin-bottom:11px;text-transform:uppercase}
+.ob-desc{font-size:0.97rem;font-style:italic;color:var(--smoke);opacity:0.58;line-height:1.75;margin-bottom:28px}
+.ob-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--bdr);border-radius:2px;color:var(--parchment);font-family:'Cormorant Garamond',serif;font-size:1.08rem;padding:13px 17px;outline:none;text-align:center;margin-bottom:26px;transition:border-color 0.3s,box-shadow 0.3s}
+.ob-input:focus{border-color:var(--gold);box-shadow:0 0 18px var(--gg)}
+.ob-btn{display:inline-flex;align-items:center;gap:10px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:0.9rem;letter-spacing:0.26em;text-transform:uppercase;padding:14px 42px;cursor:pointer;transition:all 0.35s;position:relative;overflow:hidden}
+.ob-btn::before{content:'';position:absolute;inset:0;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform 0.35s cubic-bezier(0.76,0,0.24,1)}
+.ob-btn:hover::before{transform:scaleX(1)}
+.ob-btn:hover{color:var(--ink)}
+.ob-btn span{position:relative;z-index:1}
+.ob-rgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:26px;text-align:left}
+.ob-rcard{border:1px solid rgba(201,168,76,0.15);border-radius:3px;padding:13px 12px;cursor:pointer;transition:all 0.24s}
+.ob-rcard:hover{border-color:rgba(201,168,76,0.4)}
+.ob-rcard.on{border-color:var(--gold);background:var(--gp)}
+.ob-rcard-icon{font-size:1.1rem;margin-bottom:5px}
+.ob-rcard-title{font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--parchment)}
+.ob-rcard.on .ob-rcard-title{color:var(--gold)}
+.ob-rcard-desc{font-size:0.7rem;font-style:italic;color:var(--smoke);opacity:0.42;margin-top:3px;line-height:1.4}
+.ob-skip{display:block;margin-top:16px;font-family:'DM Mono',monospace;font-size:0.54rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--smoke);opacity:0.26;cursor:pointer;background:none;border:none;width:100%}
+.ob-skip:hover{opacity:0.55}
+
+/* LAYOUT */
+.pgbar{position:fixed;top:0;left:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);z-index:200;width:0%;transition:width 0.3s}
+.wrap{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:52px 22px 140px}
+.hdr{text-align:center;margin-bottom:48px;animation:fadeDown 0.9s ease both}
+.sigil{width:52px;height:52px;margin:0 auto 18px;animation:spinR 24s linear infinite}
+@keyframes spinR{to{transform:rotate(360deg)}}
+h1{font-size:clamp(2.1rem,7vw,3.4rem);font-weight:300;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
+.sub{font-size:0.9rem;font-style:italic;color:var(--smoke);opacity:0.52}
+
+/* TABS */
+.tabs{display:flex;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--bdr);margin-bottom:44px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--smoke);opacity:0.42;font-family:'DM Mono',monospace;font-size:0.56rem;letter-spacing:0.19em;text-transform:uppercase;padding:12px 14px;cursor:pointer;transition:all 0.26s;white-space:nowrap}
+.tab:hover{opacity:0.78}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold);opacity:1}
+.panel{display:none;animation:fadeUp 0.38s ease both}
+.panel.on{display:block}
+.blk{margin-bottom:42px}
+.sec{display:flex;align-items:baseline;gap:11px;margin-bottom:11px}
+.sn{font-family:'DM Mono',monospace;font-size:0.56rem;color:var(--gold);opacity:0.46;letter-spacing:0.2em}
+.sl{font-size:0.93rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--parchment)}
+.hint{font-size:0.78rem;font-style:italic;color:var(--smoke);opacity:0.38;margin-bottom:12px;line-height:1.65}
+
+/* INPUTS */
+input[type=text],input[type=date],textarea,select{width:100%;background:rgba(255,255,255,0.025);border:1px solid var(--bdr);border-radius:2px;color:var(--parchment);font-family:'Cormorant Garamond',serif;font-size:1rem;padding:12px 16px;outline:none;transition:border-color 0.3s,background 0.3s,box-shadow 0.3s;resize:none}
+input[type=date]{color-scheme:dark}
+input:focus,textarea:focus,select:focus{border-color:var(--gold);background:var(--gp);box-shadow:0 0 18px var(--gg)}
+::placeholder{color:var(--smoke);opacity:0.26;font-style:italic}
+select{-webkit-appearance:none;appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%23c9a84c' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:34px}
+select option{background:#1c1624}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.cc{font-family:'DM Mono',monospace;font-size:0.52rem;color:var(--smoke);opacity:0.22;text-align:right;margin-top:4px}
+
+/* TAGS */
+.tags{display:flex;flex-wrap:wrap;gap:7px}
+.tag{padding:6px 13px;border:1px solid rgba(201,168,76,0.17);border-radius:100px;font-size:0.85rem;color:var(--smoke);cursor:pointer;transition:all 0.2s;background:transparent}
+.tag:hover{border-color:rgba(201,168,76,0.48);color:var(--parchment)}
+.tag.on{background:var(--gp);border-color:var(--gold);color:var(--gold)}
+
+/* SLIDER */
+.slid-wrap{padding:5px 0 2px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:2px;background:linear-gradient(90deg,var(--gold) var(--pct,70%),rgba(201,168,76,0.11) var(--pct,70%));border:none;outline:none;cursor:pointer;padding:0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;background:var(--ink);border:2px solid var(--gold);border-radius:50%;box-shadow:0 0 9px var(--gg)}
+.slid-ends{display:flex;justify-content:space-between;margin-top:6px;font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--smoke);opacity:0.36}
+.slid-hint{text-align:center;margin-top:9px;font-size:0.78rem;font-style:italic;color:var(--smoke);opacity:0.32}
+
+/* CARDS */
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{border:1px solid rgba(201,168,76,0.12);border-radius:3px;padding:15px 13px;cursor:pointer;transition:all 0.24s;background:transparent;text-align:left;position:relative}
+.card:hover{border-color:rgba(201,168,76,0.36);background:rgba(201,168,76,0.03)}
+.card.on{border-color:var(--gold);background:var(--gp)}
+.card.rose{border-color:var(--brose)}
+.card.rose:hover{border-color:var(--rose);background:var(--rp)}
+.card.rose.on{border-color:var(--rose);background:var(--rp)}
+.card.locked{opacity:0.48;cursor:default}
+.card.locked:hover{border-color:rgba(201,168,76,0.12);background:transparent}
+.ci{font-size:1.25rem;margin-bottom:6px;display:block}
+.ct{font-size:0.8rem;letter-spacing:0.11em;text-transform:uppercase;color:var(--parchment);margin-bottom:3px}
+.card.on .ct{color:var(--gold)}
+.card.rose.on .ct{color:var(--rose)}
+.cd{font-size:0.73rem;font-style:italic;color:var(--smoke);opacity:0.46;line-height:1.4}
+.lbdg{position:absolute;top:8px;right:8px;background:rgba(123,94,167,0.2);border:1px solid rgba(123,94,167,0.34);border-radius:100px;padding:2px 7px;font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.13em;text-transform:uppercase;color:#a08bd0}
+
+/* BUTTONS */
+.cta{margin-top:40px;text-align:center}
+.btn{position:relative;display:inline-flex;align-items:center;gap:10px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:0.93rem;letter-spacing:0.27em;text-transform:uppercase;padding:15px 44px;cursor:pointer;overflow:hidden;transition:color 0.3s}
+.btn::before{content:'';position:absolute;inset:0;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform 0.34s cubic-bezier(0.76,0,0.24,1)}
+.btn:hover::before{transform:scaleX(1)}
+.btn:hover{color:var(--ink);box-shadow:0 0 28px var(--gg)}
+.btn span{position:relative;z-index:1}
+.btn.rose{border-color:var(--rose);color:var(--rose)}
+.btn.rose::before{background:var(--rose)}
+.btn.rose:hover{color:#fff;box-shadow:0 0 28px var(--rg)}
+.snote{margin-top:12px;font-size:0.72rem;font-style:italic;color:var(--smoke);opacity:0.24}
+.ld{display:none;width:40px;height:40px;margin:32px auto;border-radius:50%;border:1px solid rgba(201,168,76,0.18);border-top-color:var(--gold);animation:spinR 1.2s linear infinite}
+.ld.on{display:block}
+.ld.rose{border-top-color:var(--rose);border-color:rgba(176,80,112,0.14)}
+.out{display:none;margin-top:48px;position:relative;animation:fadeUp 0.65s ease both}
+.out.on{display:block}
+.out::before{content:attr(data-g);position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--ink);padding:0 12px;color:var(--gold);font-size:0.95rem}
+.out.rose::before{color:var(--rose)}
+.outbox{border:1px solid rgba(201,168,76,0.19);border-radius:3px;padding:38px 34px;background:rgba(201,168,76,0.022)}
+.outbox.rose{border-color:rgba(176,80,112,0.23);background:rgba(176,80,112,0.022)}
+.outlbl{text-align:center;font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);opacity:0.42;margin-bottom:26px}
+.out.rose .outlbl{color:var(--rose)}
+.outtext{font-size:1.06rem;font-style:italic;font-weight:300;line-height:2;color:var(--parchment);text-align:center;white-space:pre-line;min-height:56px}
+.outtext.left{text-align:left;line-height:1.88;font-size:1rem}
+.cur{display:inline-block;width:2px;height:1em;background:var(--gold);vertical-align:middle;margin-left:1px;animation:blink 0.85s step-end infinite}
+.cur.rose{background:var(--rose)}
+@keyframes blink{50%{opacity:0}}
+.outacts{display:flex;justify-content:center;gap:11px;margin-top:28px;flex-wrap:wrap}
+.obtn{background:transparent;border:1px solid rgba(201,168,76,0.23);color:var(--smoke);font-family:'Cormorant Garamond',serif;font-size:0.8rem;letter-spacing:0.17em;text-transform:uppercase;padding:8px 17px;cursor:pointer;transition:all 0.24s}
+.obtn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* PHOTO */
+.photo-slot{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+.photo-frame{width:68px;height:68px;border-radius:50%;border:1px solid var(--bdr);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.02);cursor:pointer;transition:border-color 0.26s,box-shadow 0.26s}
+.photo-frame:hover{border-color:var(--gold);box-shadow:0 0 14px var(--gg)}
+.photo-frame img{width:100%;height:100%;object-fit:cover;display:none}
+.photo-plus{color:var(--gold);opacity:0.3;font-size:1.3rem;font-weight:200}
+.photo-lbl{font-family:'DM Mono',monospace;font-size:0.54rem;letter-spacing:0.19em;text-transform:uppercase;color:var(--smoke);opacity:0.36;margin-bottom:4px}
+.photo-hint{font-size:0.76rem;font-style:italic;color:var(--smoke);opacity:0.3;line-height:1.5}
+input[type=file]{display:none}
+
+/* ASTRO */
+.aduo{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:22px}
+.acard{border:1px solid rgba(123,94,167,0.2);border-radius:4px;padding:18px 16px;background:rgba(123,94,167,0.08);text-align:center}
+.acard.rose-ac{border-color:var(--brose);background:var(--rp)}
+.asign{font-size:1.9rem;margin-bottom:5px}
+.atitle-sm{font-family:'DM Mono',monospace;font-size:0.56rem;letter-spacing:0.17em;text-transform:uppercase;color:var(--violet);margin-bottom:3px}
+.acard.rose-ac .atitle-sm{color:var(--rose)}
+.aname{font-size:1.05rem;color:var(--parchment);margin-bottom:4px}
+.adesc{font-size:0.77rem;font-style:italic;color:var(--smoke);opacity:0.48;line-height:1.5}
+.lpbox{display:flex;align-items:center;gap:15px;border:1px solid var(--bdr);border-radius:3px;padding:16px 18px;background:var(--gp);margin-bottom:10px}
+.lpn{font-size:2.6rem;color:var(--gold);font-weight:300;line-height:1;flex-shrink:0}
+.lpt{font-family:'DM Mono',monospace;font-size:0.56rem;letter-spacing:0.13em;text-transform:uppercase;color:var(--gold);opacity:0.62;margin-bottom:3px}
+.lpd{font-size:0.85rem;font-style:italic;color:var(--smoke);opacity:0.62;line-height:1.5}
+.cbar-wrap{margin:18px 0}
+.cbar-lbl{font-family:'DM Mono',monospace;font-size:0.56rem;letter-spacing:0.17em;text-transform:uppercase;color:var(--smoke);opacity:0.42;margin-bottom:7px}
+.cbar{height:3px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden}
+.cbar-fill{height:100%;background:linear-gradient(90deg,var(--violet),var(--rose));border-radius:2px;width:0%;transition:width 1s cubic-bezier(0.34,1.56,0.64,1)}
+.cpct{font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--violet);margin-top:4px}
+.moon-row{display:flex;align-items:center;gap:13px;border:1px solid rgba(123,94,167,0.2);border-radius:3px;padding:15px 17px;background:rgba(123,94,167,0.08)}
+.moon-ico{font-size:2rem;flex-shrink:0}
+.moon-nt{font-family:'DM Mono',monospace;font-size:0.56rem;letter-spacing:0.17em;text-transform:uppercase;color:#a08bd0;margin-bottom:3px}
+.moon-nm{font-size:1rem;color:var(--parchment);margin-bottom:3px}
+.moon-tip{font-size:0.78rem;font-style:italic;color:var(--smoke);opacity:0.48;line-height:1.5}
+.astro-prompt{display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid var(--bdr);border-radius:3px;padding:18px 20px;background:rgba(255,255,255,0.014)}
+.astro-prompt-text{font-size:0.85rem;font-style:italic;color:var(--smoke);opacity:0.46;line-height:1.55}
+.astro-prompt-btn{flex-shrink:0;background:transparent;border:1px solid var(--bdr);color:var(--gold);font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;padding:8px 13px;cursor:pointer;transition:all 0.22s;white-space:nowrap;border-radius:1px}
+.astro-prompt-btn:hover{border-color:var(--gold);box-shadow:0 0 10px var(--gg)}
+
+/* JOURNAL */
+.mood-row{display:flex;gap:7px;flex-wrap:wrap}
+.mbtn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 7px;border:1px solid rgba(201,168,76,0.11);border-radius:4px;background:transparent;cursor:pointer;transition:all 0.2s;min-width:56px;flex:1}
+.mbtn:hover{border-color:rgba(201,168,76,0.36)}
+.mbtn.on{border-color:var(--gold);background:var(--gp)}
+.me{font-size:1.25rem}
+.ml{font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.09em;text-transform:uppercase;color:var(--smoke);opacity:0.48}
+.mbtn.on .ml{color:var(--gold);opacity:1}
+.jtype-row{display:flex;gap:8px;margin-bottom:13px}
+.jtbtn{padding:6px 15px;border:1px solid rgba(201,168,76,0.14);border-radius:100px;font-family:'DM Mono',monospace;font-size:0.53rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--smoke);cursor:pointer;transition:all 0.2s;background:transparent;opacity:0.52}
+.jtbtn.on{border-color:var(--gold);color:var(--gold);background:var(--gp);opacity:1}
+.jtbtn.sign-mode.on{border-color:var(--rose);color:var(--rose);background:var(--rp)}
+.savebtn{background:transparent;border:1px solid rgba(201,168,76,0.23);color:var(--gold);font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.21em;text-transform:uppercase;padding:10px 22px;cursor:pointer;transition:all 0.24s;margin-top:10px}
+.savebtn:hover{background:var(--gp)}
+.jentries{display:flex;flex-direction:column;gap:10px;max-height:380px;overflow-y:auto;padding-right:3px;scrollbar-width:thin;scrollbar-color:rgba(201,168,76,0.11) transparent}
+.jentry{background:rgba(255,255,255,0.018);border:1px solid rgba(201,168,76,0.08);border-radius:2px;padding:14px 16px;position:relative;animation:fadeUp 0.28s ease both}
+.jentry.isl{border-color:rgba(176,80,112,0.11)}
+.jentry.sign{border-color:rgba(176,80,112,0.2);background:rgba(176,80,112,0.035)}
+.sign-tag{display:inline-block;background:rgba(176,80,112,0.14);border:1px solid rgba(176,80,112,0.28);border-radius:100px;padding:2px 8px;font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.13em;text-transform:uppercase;color:var(--rose);margin-bottom:6px}
+.jmeta{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.jdate{font-family:'DM Mono',monospace;font-size:0.52rem;color:var(--gold);opacity:0.38;letter-spacing:0.11em}
+.jmood{font-size:0.88rem}
+.jtext{font-size:0.88rem;line-height:1.78;color:var(--smoke);font-style:italic;white-space:pre-wrap}
+.jdel{position:absolute;top:10px;right:10px;background:transparent;border:none;color:var(--smoke);opacity:0.14;cursor:pointer;font-family:'DM Mono',monospace;font-size:0.6rem;padding:2px 4px;transition:opacity 0.2s}
+.jdel:hover{opacity:0.48}
+.jempty{text-align:center;padding:34px;font-style:italic;color:var(--smoke);opacity:0.22;font-size:0.86rem}
+
+/* VISION BOARD */
+.vgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:13px}
+.vcell{border:1px dashed rgba(201,168,76,0.18);border-radius:3px;min-height:74px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;padding:8px;text-align:center;position:relative;overflow:hidden}
+.vcell:hover{border-color:rgba(201,168,76,0.42);background:var(--gp)}
+.vcell.filled{border-style:solid;border-color:rgba(201,168,76,0.2)}
+.vcell-c{font-size:0.82rem;color:var(--parchment);line-height:1.4;word-break:break-word}
+.vcell-plus{color:var(--gold);opacity:0.25;font-size:1.25rem;font-weight:200}
+.vdel{position:absolute;top:3px;right:3px;background:rgba(176,80,112,0.28);border:none;color:#fff;border-radius:50%;width:14px;height:14px;font-size:0.52rem;cursor:pointer;display:none;line-height:14px;text-align:center;font-family:'DM Mono',monospace}
+.vcell.filled:hover .vdel{display:block}
+.vadd-row{display:flex;gap:8px;margin-top:8px}
+.vadd-row input{flex:1}
+.vaddbtn{background:var(--gp);border:1px solid var(--gold);color:var(--gold);font-family:'DM Mono',monospace;font-size:0.56rem;letter-spacing:0.13em;text-transform:uppercase;padding:0 15px;cursor:pointer;flex-shrink:0;border-radius:1px;transition:all 0.2s}
+
+/* TRACKER */
+.stats{display:flex;gap:10px;margin-bottom:26px}
+.sbox{flex:1;border:1px solid rgba(201,168,76,0.11);border-radius:3px;padding:13px 11px;text-align:center;background:rgba(255,255,255,0.013)}
+.snum{font-size:1.8rem;color:var(--gold);font-weight:300;line-height:1}
+.slbl{font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.13em;text-transform:uppercase;color:var(--smoke);opacity:0.36;margin-top:3px}
+.tadd-row{display:flex;gap:8px;margin-bottom:13px}
+.tadd-row input{flex:1}
+.tadd-row button{background:var(--gp);border:1px solid var(--gold);color:var(--gold);font-family:'DM Mono',monospace;font-size:0.56rem;letter-spacing:0.13em;text-transform:uppercase;padding:0 15px;cursor:pointer;flex-shrink:0;border-radius:1px}
+.ints{display:flex;flex-direction:column;gap:8px}
+.iitem{display:flex;align-items:center;gap:11px;border:1px solid rgba(201,168,76,0.09);border-radius:2px;padding:12px 13px;background:rgba(255,255,255,0.018);transition:all 0.2s;position:relative}
+.iitem.done{border-color:rgba(201,168,76,0.26);background:var(--gp)}
+.iitem.done .itxt{text-decoration:line-through;opacity:0.46}
+.ichk{width:17px;height:17px;border:1px solid rgba(201,168,76,0.28);border-radius:50%;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.64rem;transition:all 0.2s}
+.iitem.done .ichk{background:var(--gold);border-color:var(--gold)}
+.itxt{flex:1;font-size:0.9rem;color:var(--smoke);font-style:italic}
+.idatl{font-family:'DM Mono',monospace;font-size:0.48rem;color:var(--gold);opacity:0.36;flex-shrink:0}
+.idel{background:transparent;border:none;color:var(--smoke);opacity:0.13;cursor:pointer;font-family:'DM Mono',monospace;font-size:0.56rem;padding:2px 4px;transition:opacity 0.2s}
+.idel:hover{opacity:0.48}
+.iempty{text-align:center;padding:32px;font-style:italic;color:var(--smoke);opacity:0.21;font-size:0.84rem}
+.manifest-msg{position:absolute;left:50%;transform:translateX(-50%);top:-32px;background:var(--gold);color:var(--ink);font-family:'DM Mono',monospace;font-size:0.56rem;letter-spacing:0.17em;text-transform:uppercase;padding:5px 13px;border-radius:100px;white-space:nowrap;animation:manifestPop 0.48s cubic-bezier(0.34,1.56,0.64,1) both;pointer-events:none}
+@keyframes manifestPop{from{opacity:0;transform:translateX(-50%) scale(0.7) translateY(5px)}to{opacity:1;transform:translateX(-50%) scale(1) translateY(0)}}
+.gpc{position:fixed;pointer-events:none;z-index:999}
+.gp{position:absolute;border-radius:50%;animation:gpFly var(--dur) ease-out forwards}
+@keyframes gpFly{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}}
+
+/* AUDIO */
+.audio-hero{border:1px solid var(--bdr);border-radius:4px;padding:24px 20px;background:var(--gp);text-align:center;margin-bottom:13px}
+.waveform{display:flex;align-items:center;justify-content:center;gap:3px;height:40px;margin:0 auto 14px}
+.wb{width:3px;border-radius:2px;background:var(--gold);opacity:0.38;animation:wave 1.5s ease-in-out infinite}
+.wb:nth-child(1){height:9px;animation-delay:0s}.wb:nth-child(2){height:18px;animation-delay:0.1s}.wb:nth-child(3){height:28px;animation-delay:0.2s}.wb:nth-child(4){height:36px;animation-delay:0.3s}.wb:nth-child(5){height:40px;animation-delay:0.4s}.wb:nth-child(6){height:36px;animation-delay:0.5s}.wb:nth-child(7){height:28px;animation-delay:0.6s}.wb:nth-child(8){height:18px;animation-delay:0.7s}.wb:nth-child(9){height:9px;animation-delay:0.8s}
+.waveform.playing .wb{opacity:1;animation:wavep 0.52s ease-in-out infinite alternate}
+@keyframes wave{0%,100%{transform:scaleY(0.32);opacity:0.26}50%{transform:scaleY(1);opacity:0.52}}
+@keyframes wavep{from{transform:scaleY(0.22)}to{transform:scaleY(1)}}
+.aud-status{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.19em;text-transform:uppercase;color:var(--gold);opacity:0.52;margin-bottom:5px}
+.aud-name{font-size:1rem;color:var(--parchment);margin-bottom:13px;font-style:italic}
+.aud-ctrls{display:flex;align-items:center;justify-content:center;gap:12px}
+.playbtn{width:48px;height:48px;border-radius:50%;background:transparent;border:1px solid var(--gold);color:var(--gold);font-size:1.05rem;cursor:pointer;transition:all 0.26s;display:flex;align-items:center;justify-content:center}
+.playbtn:hover{background:var(--gp);box-shadow:0 0 16px var(--gg)}
+.playbtn.playing{background:var(--gp);box-shadow:0 0 20px var(--gg)}
+.vwrap{display:flex;align-items:center;gap:6px}
+.vico{font-size:0.8rem;opacity:0.42}
+.vslid{-webkit-appearance:none;appearance:none;width:72px;height:2px;background:rgba(255,255,255,0.09);border:none;outline:none;cursor:pointer;border-radius:1px;padding:0}
+.vslid::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;background:var(--gold);border-radius:50%;border:none}
+.tmr{font-family:'DM Mono',monospace;font-size:0.56rem;color:var(--gold);opacity:0.52;letter-spacing:0.13em;min-width:38px}
+.layer-grid{display:flex;flex-direction:column;gap:9px}
+.lrow{display:flex;align-items:flex-start;gap:12px;padding:13px 14px;border:1px solid var(--bdr);border-radius:3px;background:rgba(255,255,255,0.018);transition:all 0.2s}
+.lrow.aon{border-color:var(--gold);background:var(--gp)}
+.lrow.prem-locked{opacity:0.52}
+.lico{font-size:1rem;flex-shrink:0;width:20px;text-align:center;padding-top:2px}
+.linfo{flex:1}
+.lname{font-size:0.82rem;color:var(--parchment);margin-bottom:2px;display:flex;align-items:center;gap:7px}
+.prem-tag{background:rgba(123,94,167,0.18);border:1px solid rgba(123,94,167,0.32);border-radius:100px;padding:1px 6px;font-family:'DM Mono',monospace;font-size:0.46rem;letter-spacing:0.11em;text-transform:uppercase;color:#a08bd0;flex-shrink:0}
+.free-tag{background:rgba(201,168,76,0.13);border:1px solid rgba(201,168,76,0.28);border-radius:100px;padding:1px 6px;font-family:'DM Mono',monospace;font-size:0.46rem;letter-spacing:0.11em;text-transform:uppercase;color:var(--gold);flex-shrink:0}
+.ldesc{font-size:0.7rem;font-style:italic;color:var(--smoke);opacity:0.38}
+.ltog{width:30px;height:16px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid var(--bdr);cursor:pointer;position:relative;transition:all 0.22s;flex-shrink:0;margin-top:2px}
+.ltog.on{background:var(--gp);border-color:var(--gold)}
+.ltog::after{content:'';position:absolute;width:10px;height:10px;border-radius:50%;background:var(--smoke);top:2px;left:2px;transition:transform 0.2s,background 0.2s}
+.ltog.on::after{transform:translateX(14px);background:var(--gold)}
+.bpills{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.bpill{padding:3px 10px;border:1px solid var(--bdr);border-radius:100px;font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.09em;text-transform:uppercase;color:var(--smoke);cursor:pointer;transition:all 0.18s;background:transparent}
+.bpill.on{border-color:var(--gold);color:var(--gold);background:var(--gp)}
+.vpills{display:flex;gap:7px;flex-wrap:wrap}
+.vpill{padding:5px 11px;border:1px solid var(--bdr);border-radius:100px;font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.09em;text-transform:uppercase;color:var(--smoke);cursor:pointer;transition:all 0.18s;background:transparent}
+.vpill.on{border-color:var(--gold);color:var(--gold);background:var(--gp)}
+.lvol{-webkit-appearance:none;appearance:none;width:60px;height:2px;background:rgba(255,255,255,0.09);border:none;outline:none;cursor:pointer;padding:0;flex-shrink:0;margin-top:7px}
+.lvol::-webkit-slider-thumb{-webkit-appearance:none;width:9px;height:9px;background:var(--gold);border-radius:50%;border:none}
+.trial-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(201,168,76,0.09);border:1px solid rgba(201,168,76,0.22);border-radius:100px;padding:4px 12px;font-family:'DM Mono',monospace;font-size:0.54rem;letter-spacing:0.13em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.trial-n{font-size:0.88rem;font-weight:500}
+
+/* SETTINGS */
+.set-card{display:flex;align-items:center;gap:15px;border:1px solid var(--bdr);border-radius:3px;padding:17px 19px;background:rgba(255,255,255,0.018);margin-bottom:12px}
+.set-card-icon{font-size:1.3rem;flex-shrink:0}
+.set-card-info{flex:1}
+.set-card-title{font-size:0.92rem;letter-spacing:0.07em;color:var(--parchment);margin-bottom:3px}
+.set-card-desc{font-size:0.76rem;font-style:italic;color:var(--smoke);opacity:0.4;line-height:1.5}
+.set-btn{background:transparent;border:1px solid var(--bdr);color:var(--gold);font-family:'DM Mono',monospace;font-size:0.56rem;letter-spacing:0.19em;text-transform:uppercase;padding:8px 16px;cursor:pointer;transition:all 0.22s;flex-shrink:0;border-radius:1px}
+.set-btn:hover{border-color:var(--gold);box-shadow:0 0 10px var(--gg)}
+.privacy-box{border:1px solid var(--bdr);border-radius:4px;padding:26px 24px;background:rgba(255,255,255,0.013);max-height:460px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(201,168,76,0.13) transparent}
+.privacy-title{font-size:1.15rem;color:var(--gold);letter-spacing:0.09em;margin-bottom:3px}
+.privacy-date{font-family:'DM Mono',monospace;font-size:0.52rem;color:var(--smoke);opacity:0.32;letter-spacing:0.14em;margin-bottom:20px}
+.privacy-section{margin-bottom:16px}
+.privacy-h{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.17em;text-transform:uppercase;color:var(--gold);opacity:0.66;margin-bottom:6px}
+.privacy-p{font-size:0.82rem;color:var(--smoke);opacity:0.58;line-height:1.75}
+.privacy-footer{margin-top:20px;padding-top:16px;border-top:1px solid var(--bdr);font-size:0.8rem;font-style:italic;color:var(--smoke);opacity:0.34;text-align:center;line-height:1.65}
+.about-box{text-align:center;border:1px solid var(--bdr);border-radius:4px;padding:28px 22px;background:var(--gp)}
+.about-name{font-size:1.7rem;color:var(--gold);letter-spacing:0.17em;text-transform:uppercase;font-weight:300;margin-bottom:3px}
+.about-ver{font-family:'DM Mono',monospace;font-size:0.52rem;color:var(--smoke);opacity:0.32;letter-spacing:0.19em;margin-bottom:9px}
+.about-tagline{font-size:0.9rem;font-style:italic;color:var(--smoke);opacity:0.46;margin-bottom:14px}
+.about-copy{font-family:'DM Mono',monospace;font-size:0.52rem;color:var(--gold);opacity:0.38;letter-spacing:0.19em}
+
+/* THEME + DISCREET */
+.fab-bar{position:fixed;bottom:24px;right:18px;z-index:300;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.fab{width:42px;height:42px;border-radius:50%;background:var(--surface);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all 0.22s;box-shadow:0 4px 16px rgba(0,0,0,0.42)}
+.fab:hover{transform:scale(1.1);border-color:var(--gold);box-shadow:0 4px 20px var(--gg)}
+.theme-pop{background:var(--surface);border:1px solid var(--bdr);border-radius:10px;padding:15px 13px;display:none;animation:fadeUp 0.2s ease both;min-width:190px;box-shadow:0 8px 26px rgba(0,0,0,0.48)}
+.theme-pop.on{display:block}
+.theme-title{font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.23em;text-transform:uppercase;color:var(--smoke);opacity:0.38;margin-bottom:11px}
+.topts{display:flex;flex-direction:column;gap:6px}
+.topt{display:flex;align-items:center;gap:10px;padding:7px 10px;border:1px solid transparent;border-radius:6px;cursor:pointer;transition:all 0.18s;background:transparent}
+.topt:hover{background:rgba(255,255,255,0.028);border-color:var(--bdr)}
+.topt.on{background:var(--gp);border-color:var(--bdr)}
+.tdot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.toname{font-family:'DM Mono',monospace;font-size:0.54rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--smoke);opacity:0.62;flex:1}
+.topt.on .toname{color:var(--gold);opacity:1}
+.tlock{font-size:0.58rem;opacity:0.42}
+.disc-bar{position:fixed;top:0;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--bdr);padding:12px 17px;z-index:400;display:none;align-items:center;justify-content:space-between}
+.disc-bar.on{display:flex}
+.disc-t{font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.19em;text-transform:uppercase;color:var(--smoke);opacity:0.52}
+.disc-x{background:transparent;border:none;color:var(--smoke);opacity:0.26;cursor:pointer;font-family:'DM Mono',monospace;font-size:0.54rem;letter-spacing:0.13em;text-transform:uppercase;padding:3px 7px;transition:opacity 0.18s}
+.disc-x:hover{opacity:0.62}
+
+/* PREMIUM MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(12,10,14,0.84);backdrop-filter:blur(6px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-bg.on{display:flex}
+.modal{background:var(--surface);border:1px solid rgba(123,94,167,0.34);border-radius:6px;padding:38px 30px;max-width:400px;width:100%;text-align:center;animation:modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both;position:relative}
+@keyframes modalIn{from{transform:scale(0.88) translateY(17px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.modal-x{position:absolute;top:12px;right:13px;background:transparent;border:none;color:var(--smoke);opacity:0.23;cursor:pointer;font-family:'DM Mono',monospace;font-size:0.7rem;padding:3px 6px;transition:opacity 0.18s}
+.modal-x:hover{opacity:0.62}
+.modal-crown{font-size:2rem;margin-bottom:11px}
+.modal-title{font-size:1.6rem;color:#a08bd0;letter-spacing:0.11em;text-transform:uppercase;font-weight:300;margin-bottom:6px}
+.modal-desc{font-size:0.85rem;font-style:italic;color:var(--smoke);opacity:0.48;margin-bottom:22px;line-height:1.62}
+.modal-perks{text-align:left;margin-bottom:22px;display:flex;flex-direction:column;gap:8px}
+.mperk{display:flex;gap:10px;font-size:0.83rem;color:var(--smoke);opacity:0.68}
+.pdot{color:#a08bd0;flex-shrink:0}
+.mplans{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.mplan{border:1px solid rgba(123,94,167,0.24);border-radius:3px;padding:12px 10px;cursor:pointer;transition:all 0.2s;position:relative}
+.mplan:hover,.mplan.on{border-color:#a08bd0;background:rgba(123,94,167,0.09)}
+.mbadge{position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--rose);border-radius:100px;padding:2px 8px;font-family:'DM Mono',monospace;font-size:0.46rem;letter-spacing:0.13em;text-transform:uppercase;color:#fff;white-space:nowrap}
+.mprice{font-size:1.28rem;color:#a08bd0;font-weight:300;margin-bottom:2px}
+.mplbl{font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.13em;text-transform:uppercase;color:var(--smoke);opacity:0.38}
+.msave{font-size:0.68rem;font-style:italic;color:var(--rose);margin-top:2px}
+.mcta{width:100%;padding:14px;background:transparent;border:1px solid #a08bd0;color:#a08bd0;font-family:'Cormorant Garamond',serif;font-size:0.92rem;letter-spacing:0.23em;text-transform:uppercase;cursor:pointer;transition:all 0.28s;position:relative;overflow:hidden}
+.mcta::before{content:'';position:absolute;inset:0;background:#a08bd0;transform:scaleX(0);transform-origin:left;transition:transform 0.32s cubic-bezier(0.76,0,0.24,1)}
+.mcta:hover::before{transform:scaleX(1)}
+.mcta:hover{color:var(--ink)}
+.mcta span{position:relative;z-index:1}
+.mtrial{font-size:0.68rem;font-style:italic;color:var(--smoke);opacity:0.26;margin-top:10px}
+
+.confirm-bg{position:fixed;inset:0;background:rgba(12,10,14,0.82);backdrop-filter:blur(5px);z-index:600;display:none;align-items:center;justify-content:center;padding:20px}
+.confirm-bg.on{display:flex}
+.confirm-box{background:var(--surface);border:1px solid rgba(176,80,112,0.35);border-radius:5px;padding:32px 28px;max-width:360px;width:100%;text-align:center;animation:modalIn 0.28s cubic-bezier(0.34,1.56,0.64,1) both}
+.confirm-icon{font-size:1.8rem;margin-bottom:12px}
+.confirm-title{font-size:1.3rem;color:var(--rose);letter-spacing:0.08em;margin-bottom:8px}
+.confirm-desc{font-size:0.84rem;font-style:italic;color:var(--smoke);opacity:0.52;line-height:1.65;margin-bottom:24px}
+.confirm-btns{display:flex;gap:10px;justify-content:center}
+.confirm-yes{background:var(--rose);border:none;color:#fff;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;padding:11px 24px;cursor:pointer;border-radius:2px;transition:opacity 0.2s}
+.confirm-yes:hover{opacity:0.82}
+.confirm-no{background:transparent;border:1px solid var(--bdr);color:var(--smoke);font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;padding:11px 24px;cursor:pointer;border-radius:2px;transition:all 0.2s}
+.confirm-no:hover{border-color:var(--gold);color:var(--gold)}
+
+@media(max-width:500px){
+  .two,.cards,.aduo,.mplans,.ob-rgrid,.three{grid-template-columns:1fr}
+  .outbox{padding:24px 15px}
+  .modal{padding:26px 17px}
+  .btn{padding:13px 26px;font-size:0.86rem}
+  .vgrid{grid-template-columns:repeat(2,1fr)}
+  .stats{gap:6px}
+  .fab-bar{bottom:18px;right:13px}
+  .astro-prompt{flex-direction:column;gap:10px}
+}
+</style>
+</head>
+<body data-theme="midnight-gold">
+
+<!-- ONBOARDING -->
+<div class="ob-bg" id="obBg">
+  <div class="ob-box">
+    <svg class="ob-sigil" viewBox="0 0 54 54" fill="none"><circle cx="27" cy="27" r="25" stroke="#c9a84c" stroke-width="0.5" stroke-dasharray="4 3"/><circle cx="27" cy="27" r="16" stroke="#c9a84c" stroke-width="0.4" opacity="0.45"/><circle cx="27" cy="27" r="3.5" fill="#c9a84c" opacity="0.62"/><path d="M27 11L30.5 21.2L41 21.2L33 27.4L36 37.6L27 31.4L18 37.6L21 27.4L13 21.2L23.5 21.2Z" stroke="#c9a84c" stroke-width="0.42" fill="none" opacity="0.35"/></svg>
+    <div class="ob-steps"><div class="ob-dot on" id="od0"></div><div class="ob-dot" id="od1"></div><div class="ob-dot" id="od2"></div></div>
+    <div class="ob-slide on" id="obs0">
+      <div class="ob-title">Welcome to Conjure</div>
+      <div class="ob-desc">Your private sanctuary for manifesting a specific person. Everything you write here belongs only to you. Nothing is stored. Nothing is judged.</div>
+      <button class="ob-btn" id="obNext0"><span>Begin Your Practice ✦</span></button>
+      <button class="ob-skip" id="obSkip">skip for now</button>
+    </div>
+    <div class="ob-slide" id="obs1">
+      <div class="ob-icon">🌙</div>
+      <div class="ob-title">Who are you calling in?</div>
+      <div class="ob-desc">Enter their name — or a private name only you would know.</div>
+      <input class="ob-input" type="text" id="obName" placeholder="Their name…" maxlength="60">
+      <button class="ob-btn" id="obNext1"><span>Continue ✦</span></button>
+    </div>
+    <div class="ob-slide" id="obs2">
+      <div class="ob-icon">✦</div>
+      <div class="ob-title">Choose your first ritual</div>
+      <div class="ob-desc">Start with one. You can explore all of them inside.</div>
+      <div class="ob-rgrid" id="obRitGrid">
+        <div class="ob-rcard on" data-ritual="affirmation"><div class="ob-rcard-icon">🌙</div><div class="ob-rcard-title">Affirmations</div><div class="ob-rcard-desc">7 daily truths to reprogram your belief</div></div>
+        <div class="ob-rcard" data-ritual="369"><div class="ob-rcard-icon">✦</div><div class="ob-rcard-title">3-6-9 Method</div><div class="ob-rcard-desc">Morning, midday, and night alignment</div></div>
+        <div class="ob-rcard" data-ritual="scripting"><div class="ob-rcard-icon">✉️</div><div class="ob-rcard-title">Scripting Letter</div><div class="ob-rcard-desc">Write from the future where it happened</div></div>
+        <div class="ob-rcard" data-ritual="scene"><div class="ob-rcard-icon">🕯️</div><div class="ob-rcard-title">Guided Scene</div><div class="ob-rcard-desc">Visualize the feeling into existence</div></div>
+      </div>
+      <button class="ob-btn" id="obDone"><span>Enter Conjure ✦</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- DISCREET BAR -->
+<div class="disc-bar" id="discBar">
+  <span class="disc-t">📓 My Daily Planner</span>
+  <button class="disc-x" id="discExit">exit discreet</button>
+</div>
+
+<!-- PREMIUM MODAL -->
+<div class="modal-bg" id="premBg">
+  <div class="modal">
+    <button class="modal-x" id="premClose">✕ close</button>
+    <div class="modal-crown">👑</div>
+    <div class="modal-title">Conjure Premium</div>
+    <div class="modal-desc">Unlock the full depth of your practice.</div>
+    <div class="modal-perks">
+      <div class="mperk"><span class="pdot">✦</span> All 8 ritual forms incl. Pillow, Mirror and 55×5</div>
+      <div class="mperk"><span class="pdot">✦</span> All 6 SP letter tones</div>
+      <div class="mperk"><span class="pdot">✦</span> Full astrology synastry and numerology</div>
+      <div class="mperk"><span class="pdot">✦</span> Binaural beats, subliminal affirmations and unlimited AI meditations</div>
+      <div class="mperk"><span class="pdot">✦</span> All 5 app themes and discreet mode</div>
+      <div class="mperk"><span class="pdot">✦</span> PDF export and vision board photos</div>
+    </div>
+    <div class="mplans">
+      <div class="mplan on" id="planM"><div class="mprice">₹249</div><div class="mplbl">per month</div></div>
+      <div class="mplan" id="planY"><div class="mbadge">Best Value</div><div class="mprice">₹999</div><div class="mplbl">per year</div><div class="msave">Save 67%</div></div>
+    </div>
+    <button class="mcta"><span>✦ Begin Your Full Practice ✦</span></button>
+    <div class="mtrial">7-day free trial · No payment needed · Cancel anytime</div>
+  </div>
+</div>
+
+<!-- CONFIRM DIALOG -->
+<div class="confirm-bg" id="confirmBg">
+  <div class="confirm-box">
+    <div class="confirm-icon">🗑️</div>
+    <div class="confirm-title">Clear Everything?</div>
+    <div class="confirm-desc">This will permanently reset the entire app — SP profile, journal, tracker, vision board, and all generated content. This cannot be undone.</div>
+    <div class="confirm-btns">
+      <button class="confirm-no" id="confirmNo">Cancel</button>
+      <button class="confirm-yes" id="confirmYes">Yes, Clear All</button>
+    </div>
+  </div>
+</div>
+
+<!-- FLOATING BUTTONS -->
+<div class="fab-bar">
+  <div class="theme-pop" id="themePop">
+    <div class="theme-title">Choose Your Energy</div>
+    <div class="topts">
+      <div class="topt on" id="t-midnight-gold"><div class="tdot" style="background:linear-gradient(135deg,#c9a84c,#6a3d8f)"></div><span class="toname">Midnight Gold</span><span class="tlock">Free</span></div>
+      <div class="topt" id="t-dark-rose"><div class="tdot" style="background:linear-gradient(135deg,#d4788a,#8b3050)"></div><span class="toname">Dark Rose</span><span class="tlock">Free</span></div>
+      <div class="topt" id="t-mystic-violet"><div class="tdot" style="background:linear-gradient(135deg,#a08bd0,#3d2875)"></div><span class="toname">Mystic Violet</span><span class="tlock">👑</span></div>
+      <div class="topt" id="t-forest"><div class="tdot" style="background:linear-gradient(135deg,#7ab87a,#2d5a2d)"></div><span class="toname">Forest Mist</span><span class="tlock">👑</span></div>
+      <div class="topt" id="t-ocean"><div class="tdot" style="background:linear-gradient(135deg,#5ba8c4,#1a4d6a)"></div><span class="toname">Ocean Depth</span><span class="tlock">👑</span></div>
+    </div>
+  </div>
+  <div class="fab" id="discFab" title="Discreet Mode">🫥</div>
+  <div class="fab" id="themeFab" title="Change Theme">🎨</div>
+</div>
+
+<div class="wrap">
+  <header class="hdr">
+    <svg class="sigil" viewBox="0 0 54 54" fill="none"><circle cx="27" cy="27" r="25" stroke="#c9a84c" stroke-width="0.5" stroke-dasharray="4 3"/><circle cx="27" cy="27" r="16" stroke="#c9a84c" stroke-width="0.4" opacity="0.45"/><circle cx="27" cy="27" r="3.5" fill="#c9a84c" opacity="0.62"/><path d="M27 11L30.5 21.2L41 21.2L33 27.4L36 37.6L27 31.4L18 37.6L21 27.4L13 21.2L23.5 21.2Z" stroke="#c9a84c" stroke-width="0.42" fill="none" opacity="0.35"/><line x1="27" y1="2" x2="27" y2="52" stroke="#c9a84c" stroke-width="0.27" opacity="0.17"/><line x1="2" y1="27" x2="52" y2="27" stroke="#c9a84c" stroke-width="0.27" opacity="0.17"/></svg>
+    <h1>Conjure</h1>
+    <p class="sub">your specific person manifestation sanctuary</p>
+  </header>
+
+  <nav class="tabs" id="tabNav">
+    <button class="tab on" data-tab="profile">☽ SP Profile</button>
+    <button class="tab" data-tab="ritual">✦ Ritual</button>
+    <button class="tab" data-tab="spl">💌 SP Letter</button>
+    <button class="tab" data-tab="astro">🔮 Astro &amp; Soul</button>
+    <button class="tab" data-tab="journal">🕯 Journal</button>
+    <button class="tab" data-tab="vision">🖼 Vision Board</button>
+    <button class="tab" data-tab="tracker">🎯 Tracker</button>
+    <button class="tab" data-tab="audio">🎧 Audio</button>
+    <button class="tab" data-tab="settings">⚙️ Settings</button>
+  </nav>
+
+  <!-- SP PROFILE -->
+  <div class="panel on" id="p-profile">
+    <div class="blk">
+      <div class="sec"><span class="sn">their details —</span><span class="sl">Your SP</span></div>
+      <p class="hint">The more you fill in, the more personalized every ritual becomes.</p>
+      <div class="photo-slot">
+        <div class="photo-frame" id="photoFrame">
+          <img id="photoImg" src="" alt="">
+          <span class="photo-plus" id="photoPlus">+</span>
+        </div>
+        <div>
+          <div class="photo-lbl">Their Photo — optional</div>
+          <div class="photo-hint">Stored only on your device. Never uploaded. Tap to add.</div>
+        </div>
+      </div>
+      <input type="file" id="photoInput" accept="image/*">
+      <div class="two" style="margin-bottom:10px">
+        <input type="text" id="spName" placeholder="Their name…">
+        <input type="date" id="spDOB">
+      </div>
+      <div class="three" style="margin-bottom:10px">
+        <select id="spGender">
+          <option value="him">He / Him</option>
+          <option value="her">She / Her</option>
+          <option value="them">They / Them</option>
+        </select>
+        <select id="spRel">
+          <option value="">— relationship —</option>
+          <option>Ex partner</option><option>Current partner</option>
+          <option>Crush / unrequited</option><option>Old friend</option>
+          <option>Teacher / mentor</option><option>Colleague</option><option>Complicated</option>
+        </select>
+        <select id="spEnergy">
+          <option value="">— their energy —</option>
+          <option>Warm and open</option><option>Reserved and private</option>
+          <option>Intellectual and intense</option><option>Playful and witty</option>
+          <option>Calm and grounding</option><option>Magnetic and complex</option>
+        </select>
+      </div>
+      <textarea id="spMemory" rows="3" placeholder="A memory, detail, or thing only you two would know…" maxlength="300"></textarea>
+      <div class="cc" id="spMemCC">0 / 300</div>
+    </div>
+    <div class="blk">
+      <div class="sec"><span class="sn">you —</span><span class="sl">Your Details</span></div>
+      <div class="two">
+        <input type="text" id="myName" placeholder="Your name…">
+        <input type="date" id="myDOB">
+      </div>
+    </div>
+    <div id="profDisplay" style="display:none">
+      <div class="blk">
+        <div class="sec"><span class="sn">reading —</span><span class="sl">Your Connection</span></div>
+        <div class="aduo">
+          <div class="acard"><div class="asign" id="spSigil">🌙</div><div class="atitle-sm">Their Sun Sign</div><div class="aname" id="spSignName">—</div><div class="adesc" id="spSignDesc">Enter their birthdate above</div></div>
+          <div class="acard rose-ac"><div class="asign" id="mySigil">☀️</div><div class="atitle-sm" style="color:var(--rose)">Your Sun Sign</div><div class="aname" id="mySignName">—</div><div class="adesc" id="mySignDesc">Enter your birthdate above</div></div>
+        </div>
+        <div id="lpSection" style="display:none">
+          <div class="lpbox"><div class="lpn" id="spLP">—</div><div><div class="lpt">Their Life Path</div><div class="lpd" id="spLPd">—</div></div></div>
+          <div class="lpbox" style="margin-top:10px"><div class="lpn" id="myLP" style="color:var(--rose)">—</div><div><div class="lpt" style="color:var(--rose)">Your Life Path</div><div class="lpd" id="myLPd">—</div></div></div>
+          <div class="cbar-wrap"><div class="cbar-lbl">Soul Resonance Score</div><div class="cbar"><div class="cbar-fill" id="compatBar"></div></div><div class="cpct" id="compatPct">—</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RITUAL -->
+  <div class="panel" id="p-ritual">
+    <div class="blk"><div class="sec"><span class="sn">01 —</span><span class="sl">Their Name</span></div><input type="text" id="rName" placeholder="Who are you calling in?…"></div>
+    <div class="blk"><div class="sec"><span class="sn">02 —</span><span class="sl">Their Essence</span></div>
+      <div class="tags" id="rTags"><button class="tag">Warm</button><button class="tag">Intellectual</button><button class="tag">Mysterious</button><button class="tag">Protective</button><button class="tag">Witty</button><button class="tag">Calm</button><button class="tag">Passionate</button><button class="tag">Intense</button><button class="tag">Gentle</button><button class="tag">Bold</button><button class="tag">Thoughtful</button><button class="tag">Tender</button></div>
+    </div>
+    <div class="blk"><div class="sec"><span class="sn">03 —</span><span class="sl">Your Intention</span></div>
+      <select id="rIntent"><option value="">— choose your intention —</option><option value="reconnect">Reconnect after silence</option><option value="deepen">Deepen an existing bond</option><option value="attraction">Draw romantic attraction</option><option value="communication">Open communication</option><option value="commitment">Inspire commitment</option><option value="healing">Heal and restore the connection</option><option value="first_move">Inspire them to reach out first</option><option value="clarity">Receive clarity from them</option></select>
+    </div>
+    <div class="blk"><div class="sec"><span class="sn">04 —</span><span class="sl">What I Want Them to Know</span></div>
+      <p class="hint">The thing you haven't said out loud. This feeds directly into your ritual.</p>
+      <textarea id="rWish" rows="4" placeholder="Tell them something real…" maxlength="500"></textarea>
+      <div class="cc" id="rWishCC">0 / 500</div>
+    </div>
+    <div class="blk"><div class="sec"><span class="sn">05 —</span><span class="sl">Your Emotional Frequency</span></div>
+      <div class="slid-wrap">
+        <input type="range" id="rFreq" min="1" max="10" value="7">
+        <div class="slid-ends"><span>tender and still</span><span>magnetic and certain</span></div>
+        <div class="slid-hint" id="freqHint">How certain does your body feel right now?</div>
+      </div>
+    </div>
+    <div class="blk"><div class="sec"><span class="sn">06 —</span><span class="sl">Choose Your Ritual Form</span></div>
+      <div class="cards" id="ritCards">
+        <div class="card on" data-ritual="affirmation"><span class="ci">🌙</span><div class="ct">Affirmations</div><div class="cd">7 daily truth-scripts to reprogram your subconscious</div></div>
+        <div class="card" data-ritual="369"><span class="ci">✦</span><div class="ct">3-6-9 Method</div><div class="cd">Write morning, midday, and night for alignment</div></div>
+        <div class="card" data-ritual="scripting"><span class="ci">✉️</span><div class="ct">Scripting Letter</div><div class="cd">Write from the future where it has already happened</div></div>
+        <div class="card" data-ritual="scene"><span class="ci">🕯️</span><div class="ct">Guided Scene</div><div class="cd">A visualization script to step into the feeling</div></div>
+        <div class="card locked" data-prem="1"><span class="ci">🛏️</span><div class="ct">Pillow Method</div><div class="cd">What to whisper before sleep</div><span class="lbdg">👑 Premium</span></div>
+        <div class="card locked" data-prem="1"><span class="ci">🪞</span><div class="ct">Mirror Work</div><div class="cd">What to say to yourself each morning</div><span class="lbdg">👑 Premium</span></div>
+        <div class="card locked" data-prem="1"><span class="ci">5️⃣</span><div class="ct">55×5 Method</div><div class="cd">Write your affirmation 55 times for 5 days</div><span class="lbdg">👑 Premium</span></div>
+        <div class="card locked" data-prem="1"><span class="ci">🌊</span><div class="ct">Whisper Technique</div><div class="cd">Guided visualization to send your words</div><span class="lbdg">👑 Premium</span></div>
+      </div>
+    </div>
+    <div class="cta">
+      <button class="btn" id="conjureBtn"><span>✦</span><span>Begin the Conjure</span><span>✦</span></button>
+      <div class="snote">Your words remain private. Nothing is stored.</div>
+    </div>
+    <div class="ld" id="ldR"></div>
+    <div class="out" id="outR" data-g="❧">
+      <div class="outbox">
+        <div class="outlbl">Your Manifestation Scroll — <span id="outRDate"></span></div>
+        <div class="outtext" id="outRText"></div>
+        <div class="outacts">
+          <button class="obtn" id="copyR">Copy</button>
+          <button class="obtn" id="saveR">Save to Journal</button>
+          <button class="obtn" id="resetR">Begin Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SP LETTER -->
+  <div class="panel" id="p-spl">
+    <p class="hint" style="font-size:0.86rem;opacity:0.54;line-height:1.75;margin-bottom:24px">This is scripting from their perspective. You are practicing <em>receiving</em>. Read it slowly, as if they wrote it.</p>
+    <div class="blk"><div class="sec"><span class="sn">01 —</span><span class="sl">Who Is Writing to You?</span></div>
+      <div class="two"><input type="text" id="lSP" placeholder="Their name…"><input type="text" id="lYou" placeholder="Your name, as they would say it…"></div>
+    </div>
+    <div class="blk"><div class="sec"><span class="sn">02 —</span><span class="sl">The Letter's Tone</span></div>
+      <div class="cards" id="toneCards">
+        <div class="card rose on" data-tone="longing"><div class="ct">Longing</div><div class="cd">They miss you and can no longer hold it back</div></div>
+        <div class="card rose" data-tone="devotion"><div class="ct">Devotion</div><div class="cd">They see you fully and are choosing you</div></div>
+        <div class="card rose" data-tone="confession"><div class="ct">Confession</div><div class="cd">They finally say what they have always felt</div></div>
+        <div class="card rose locked" data-prem="1"><div class="ct">Apology</div><div class="cd">They own what they withheld</div><span class="lbdg">👑 Premium</span></div>
+        <div class="card rose locked" data-prem="1"><div class="ct">Reunion</div><div class="cd">They are reaching out after silence</div><span class="lbdg">👑 Premium</span></div>
+        <div class="card rose locked" data-prem="1"><div class="ct">Gratitude</div><div class="cd">They thank you for what you gave them</div><span class="lbdg">👑 Premium</span></div>
+      </div>
+    </div>
+    <div class="blk"><div class="sec"><span class="sn">03 —</span><span class="sl">What Should They Say?</span></div>
+      <p class="hint">Optional — seed the letter with personal details, a memory, something only they would know.</p>
+      <textarea id="lHints" rows="4" placeholder="e.g. the way they always noticed something others missed… or that late night when everything was almost said…" maxlength="500"></textarea>
+      <div class="cc" id="lHCC">0 / 500</div>
+    </div>
+    <div class="blk"><div class="sec"><span class="sn">04 —</span><span class="sl">About Them</span></div>
+      <div class="two">
+        <select id="lStyle"><option value="">— their natural voice —</option><option value="poetic">Poetic and layered</option><option value="direct">Direct and honest</option><option value="shy">Quiet and a little hesitant</option><option value="intellectual">Thoughtful and precise</option><option value="warm">Warm and expressive</option><option value="restrained">Reserved — much implied</option></select>
+        <select id="lLength"><option value="short">Short and piercing — 2 paragraphs</option><option value="medium" selected>Medium — 4 to 5 paragraphs</option></select>
+      </div>
+      <br>
+      <textarea id="lNotes" rows="3" placeholder="Anything else that is true about them — how they think, what they notice, what makes them them…" maxlength="500"></textarea>
+      <div class="cc" id="lNCC">0 / 500</div>
+    </div>
+    <div class="cta">
+      <button class="btn rose" id="letterBtn"><span>💌</span><span>Receive Their Letter</span><span>💌</span></button>
+      <div class="snote">Scripting is a tool for emotional alignment, not prediction.</div>
+    </div>
+    <div class="ld rose" id="ldL"></div>
+    <div class="out rose" id="outL" data-g="♡">
+      <div class="outbox rose">
+        <div class="outlbl">A Letter from <span id="outLSP">them</span> — <span id="outLDate"></span></div>
+        <div class="outtext left" id="outLText"></div>
+        <div class="outacts"><button class="obtn" id="copyL">Copy Letter</button><button class="obtn" id="saveL">Save to Journal</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASTRO & SOUL -->
+  <div class="panel" id="p-astro">
+    <div class="blk"><div class="sec"><span class="sn">tonight —</span><span class="sl">Moon Phase</span></div>
+      <div class="moon-row"><div class="moon-ico" id="moonIco">🌙</div><div><div class="moon-nt">Current Phase</div><div class="moon-nm" id="moonNm">—</div><div class="moon-tip" id="moonTip">—</div></div></div>
+    </div>
+    <div class="blk"><div class="sec"><span class="sn">numbers —</span><span class="sl">Life Path Reading</span></div>
+      <div id="astroPromptBox" style="display:none">
+        <div class="astro-prompt"><div class="astro-prompt-text">Add birthdates in SP Profile to unlock your numerology and compatibility reading here.</div><button class="astro-prompt-btn" id="goToProfile">Go to SP Profile →</button></div>
+        <br>
+      </div>
+      <div id="lpReadings" style="display:none">
+        <div class="lpbox"><div class="lpn" id="aSpLP">—</div><div><div class="lpt" id="aSpName">Their Life Path</div><div class="lpd" id="aSpLPd">—</div></div></div>
+        <div class="lpbox" style="margin-top:10px"><div class="lpn" id="aMyLP" style="color:var(--rose)">—</div><div><div class="lpt" style="color:var(--rose)">Your Life Path</div><div class="lpd" id="aMyLPd">—</div></div></div>
+        <div class="aduo" style="margin-top:13px">
+          <div class="acard"><div class="asign" id="aSpSigil">🌙</div><div class="atitle-sm">Their Sun Sign</div><div class="aname" id="aSpSgn">—</div><div class="adesc" id="aSpSgnD">—</div></div>
+          <div class="acard rose-ac"><div class="asign" id="aMySigil">☀️</div><div class="atitle-sm" style="color:var(--rose)">Your Sun Sign</div><div class="aname" id="aMySgn">—</div><div class="adesc" id="aMySgnD">—</div></div>
+        </div>
+        <div class="cbar-wrap"><div class="cbar-lbl">Soul Resonance Score</div><div class="cbar"><div class="cbar-fill" id="aCompatBar"></div></div><div class="cpct" id="aCompatPct">—</div></div>
+      </div>
+    </div>
+    <div class="blk"><div class="sec"><span class="sn">synastry —</span><span class="sl">Full Reading <span style="color:#a08bd0;font-size:0.72rem">👑</span></span></div>
+      <div style="text-align:center;padding:20px"><div style="font-size:0.84rem;font-style:italic;color:var(--smoke);opacity:0.36;margin-bottom:13px">Venus-Mars placement analysis, element harmony, and full compatibility report.</div><button class="btn" style="font-size:0.76rem;padding:10px 24px;letter-spacing:0.17em" id="synBtn"><span>👑 Unlock Full Synastry</span></button></div>
+    </div>
+    <div class="blk"><div class="sec"><span class="sn">ritual —</span><span class="sl">Moon Phase Script <span style="color:#a08bd0;font-size:0.72rem">👑</span></span></div>
+      <div style="text-align:center;padding:20px"><div style="font-size:0.84rem;font-style:italic;color:var(--smoke);opacity:0.36;margin-bottom:13px">A personalized ritual script for tonight's exact moon phase.</div><button class="btn" style="font-size:0.76rem;padding:10px 24px;letter-spacing:0.17em" id="moonRitBtn"><span>👑 Generate Moon Ritual</span></button></div>
+    </div>
+  </div>
+
+  <!-- JOURNAL -->
+  <div class="panel" id="p-journal">
+    <div class="blk"><div class="sec"><span class="sn">now —</span><span class="sl">How Are You Feeling?</span></div>
+      <div class="mood-row">
+        <button class="mbtn" data-mood="✨"><span class="me">✨</span><span class="ml">Hopeful</span></button>
+        <button class="mbtn" data-mood="🌙"><span class="me">🌙</span><span class="ml">Dreamy</span></button>
+        <button class="mbtn" data-mood="💛"><span class="me">💛</span><span class="ml">Warm</span></button>
+        <button class="mbtn" data-mood="🌊"><span class="me">🌊</span><span class="ml">Unsettled</span></button>
+        <button class="mbtn" data-mood="🕯️"><span class="me">🕯️</span><span class="ml">Tender</span></button>
+        <button class="mbtn" data-mood="🔥"><span class="me">🔥</span><span class="ml">Certain</span></button>
+        <button class="mbtn" data-mood="🫧"><span class="me">🫧</span><span class="ml">Peaceful</span></button>
+      </div>
+    </div>
+    <div class="blk"><div class="sec"><span class="sn">write —</span><span class="sl">Your Entry</span></div>
+      <div class="jtype-row">
+        <button class="jtbtn on" id="jtNote">📝 Personal Note</button>
+        <button class="jtbtn sign-mode" id="jtSign">✨ Signs Log</button>
+      </div>
+      <p class="hint" id="jHintNote">A feeling. A memory. Something you noticed. Only for you.</p>
+      <p class="hint" id="jHintSign" style="display:none;color:var(--rose);opacity:0.54">Record a real-life sign — a text, a song, running into them, a dream. Your personal evidence over time.</p>
+      <textarea id="jNote" rows="7" placeholder="What is alive in you right now?…" maxlength="1000"></textarea>
+      <div class="cc" id="jCC">0 / 1000</div>
+      <button class="savebtn" id="jSaveBtn">✦ Save Entry</button>
+    </div>
+    <div class="blk"><div class="sec"><span class="sn">archive —</span><span class="sl">Your Entries</span></div>
+      <div class="jentries" id="jEntries"><div class="jempty" id="jEmpty">No entries yet. Your first note is waiting.</div></div>
+    </div>
+  </div>
+
+  <!-- VISION BOARD -->
+  <div class="panel" id="p-vision">
+    <div class="blk"><div class="sec"><span class="sn">your board —</span><span class="sl">Vision Board</span></div>
+      <p class="hint">Add words, phrases, feelings, or symbols that represent your desired reality.</p>
+      <div class="vgrid" id="vbGrid"></div>
+      <div class="vadd-row"><input type="text" id="vbInput" placeholder="Type a word, phrase or emoji…" maxlength="60"><button class="vaddbtn" id="vbAddBtn">Add ✦</button></div>
+    </div>
+    <div style="text-align:center;padding:16px"><div style="font-size:0.82rem;font-style:italic;color:var(--smoke);opacity:0.34;margin-bottom:13px">Premium: Set as wallpaper, add photos, create multiple boards.</div><button class="btn" style="font-size:0.76rem;padding:10px 24px;letter-spacing:0.17em" id="vbPremBtn"><span>👑 Full Vision Board</span></button></div>
+  </div>
+
+  <!-- TRACKER -->
+  <div class="panel" id="p-tracker">
+    <div class="stats">
+      <div class="sbox"><div class="snum" id="stTotal">0</div><div class="slbl">Set</div></div>
+      <div class="sbox"><div class="snum" id="stDone">0</div><div class="slbl">Manifested</div></div>
+      <div class="sbox"><div class="snum" id="stPct">0%</div><div class="slbl">Success Rate</div></div>
+    </div>
+    <div class="blk"><div class="sec"><span class="sn">set —</span><span class="sl">Log an Intention</span></div>
+      <div class="tadd-row"><input type="text" id="intInput" placeholder="e.g. They reach out to me first…"><button id="intAddBtn">Add ✦</button></div>
+      <div class="ints" id="intList"><div class="iempty" id="intEmpty">No intentions logged yet.</div></div>
+    </div>
+  </div>
+
+  <!-- AUDIO -->
+  <div class="panel" id="p-audio">
+    <div class="blk"><div class="sec"><span class="sn">soundscape —</span><span class="sl">Subliminal Audio Builder</span></div>
+      <p class="hint">Layer sounds beneath your awareness. Use headphones for the full effect.</p>
+      <div class="audio-hero">
+        <div class="waveform" id="mainWave"><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div></div>
+        <div class="aud-status" id="audStatus">Ready to play</div>
+        <div class="aud-name">Your Subliminal Session</div>
+        <div class="aud-ctrls">
+          <div class="vwrap"><span class="vico">🔈</span><input type="range" class="vslid" id="masterVol" min="0" max="100" value="75"></div>
+          <button class="playbtn" id="mainPlayBtn">▶</button>
+          <div class="vwrap"><span class="tmr" id="timerDisp">00:00</span></div>
+        </div>
+      </div>
+      <div class="layer-grid">
+        <div class="lrow aon" id="lrow-noise">
+          <div class="lico">🌧️</div>
+          <div class="linfo"><div class="lname">Ambient Brown Noise <span class="free-tag">Free</span></div><div class="ldesc">Grounds the mind and blocks distraction</div></div>
+          <input type="range" class="lvol" id="lv-noise" min="0" max="100" value="60">
+          <div class="ltog on" id="lt-noise"></div>
+        </div>
+        <div class="lrow prem-locked" id="lrow-binaural">
+          <div class="lico">〰️</div>
+          <div class="linfo"><div class="lname">Binaural Beats <span class="prem-tag">👑 Premium</span></div><div class="ldesc">Two tones sync your brainwaves — wear headphones</div><div class="bpills"><button class="bpill on" data-bf="6">Theta 6Hz</button><button class="bpill" data-bf="10">Alpha 10Hz</button><button class="bpill" data-bf="2">Delta 2Hz</button></div></div>
+          <div class="ltog" style="opacity:0.38;cursor:default"></div>
+        </div>
+        <div class="lrow prem-locked" id="lrow-aff">
+          <div class="lico">🌙</div>
+          <div class="linfo"><div class="lname">Whispered Affirmations <span class="prem-tag">👑 Premium</span></div><div class="ldesc">Affirmations spoken softly beneath awareness</div></div>
+          <div class="ltog" style="opacity:0.38;cursor:default"></div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:14px"><button class="btn" style="font-size:0.76rem;padding:10px 24px;letter-spacing:0.17em" id="unlockLayersBtn"><span>👑 Unlock Binaural + Affirmations</span></button></div>
+    </div>
+    <div class="blk"><div class="sec"><span class="sn">meditation —</span><span class="sl">AI Guided Meditation</span></div>
+      <p class="hint">Generate a personalized meditation with your SP's name woven in — then listen to it read aloud.</p>
+      <div class="trial-badge" id="trialBadge"><span class="trial-n" id="trialN">3</span> free generations remaining</div>
+      <div class="two" style="margin-bottom:10px">
+        <input type="text" id="audSP" placeholder="SP's name…">
+        <select id="audIntent"><option value="reconnect">Reconnect with them</option><option value="attraction">Draw their attraction</option><option value="heal">Heal the bond</option><option value="receive">Receive their love</option></select>
+      </div>
+      <div style="margin-bottom:13px"><div class="sec" style="margin-bottom:8px"><span class="sn">voice —</span><span class="sl">Narrator Style</span></div>
+        <div class="vpills" id="voicePills"><button class="vpill on" data-vs="gentle">Gentle</button><button class="vpill" data-vs="warm">Warm</button><button class="vpill" data-vs="slow">Slow and deep</button></div>
+      </div>
+      <div class="cta" style="margin-top:20px">
+        <button class="btn" id="genMedBtn"><span>🎧</span><span>Generate and Play</span><span>🎧</span></button>
+        <div class="snote">Script by AI — narrated by your browser's voice engine</div>
+      </div>
+      <div class="ld" id="ldAud"></div>
+      <div class="out" id="outAud" data-g="🎧">
+        <div class="outbox">
+          <div class="outlbl">Your Meditation Script</div>
+          <div class="audio-hero" style="margin-bottom:13px">
+            <div class="waveform" id="medWave"><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div></div>
+            <div class="aud-status" id="medStatus">Ready</div>
+            <div class="aud-ctrls">
+              <div class="vwrap"><span class="vico">🔈</span><input type="range" class="vslid" id="medVol" min="0" max="100" value="90"></div>
+              <button class="playbtn" id="medPlayBtn">▶</button>
+              <div class="vwrap"><input type="range" class="vslid" id="medRate" min="40" max="100" value="72"><span class="vico" style="font-size:0.54rem;font-family:'DM Mono',monospace;opacity:0.36">SPD</span></div>
+            </div>
+          </div>
+          <div class="outtext left" id="outAudText" style="font-size:0.9rem;line-height:1.82;max-height:250px;overflow-y:auto;scrollbar-width:thin"></div>
+          <div class="outacts"><button class="obtn" id="copyAud">Copy Script</button><button class="obtn" id="saveAud">Save to Journal</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="panel" id="p-settings">
+    <div class="blk"><div class="sec"><span class="sn">setup —</span><span class="sl">Your API Key</span></div>
+      <p class="hint">Enter your Anthropic API key once. It is saved only on your device and never shared with anyone.</p>
+      <div class="set-card">
+        <div class="set-card-icon">🔑</div>
+        <div class="set-card-info">
+          <div class="set-card-title">Anthropic API Key</div>
+          <input type="password" id="apiKeyInput" placeholder="sk-ant-..." style="width:100%;margin-top:8px;background:rgba(255,255,255,0.03);border:1px solid var(--bdr);border-radius:3px;padding:10px 12px;color:var(--parchment);font-family:'DM Mono',monospace;font-size:0.78rem;outline:none"/>
+        </div>
+        <button class="set-btn" id="saveApiKeyBtn">Save ✦</button>
+      </div>
+    </div>
+    <div class="blk"><div class="sec"><span class="sn">your data —</span><span class="sl">Export Everything</span></div>
+      <p class="hint">All your journal entries, intentions, SP profile, and vision board — downloaded as a text file. Your data belongs to you, always.</p>
+      <div class="set-card">
+        <div class="set-card-icon">📦</div>
+        <div class="set-card-info"><div class="set-card-title">Export My Data</div><div class="set-card-desc">Downloads a complete copy of everything you have written in Conjure.</div></div>
+        <button class="set-btn" id="exportBtn">Export ✦</button>
+      </div>
+    </div>
+    <div class="blk"><div class="sec"><span class="sn">privacy —</span><span class="sl">Clear All My Data</span></div>
+      <p class="hint">Permanently resets the entire app — SP profile, journal, tracker, vision board, all generated content. Cannot be undone.</p>
+      <div class="set-card" style="border-color:rgba(176,80,112,0.2)">
+        <div class="set-card-icon">🗑️</div>
+        <div class="set-card-info"><div class="set-card-title" style="color:var(--rose)">Clear All Data</div><div class="set-card-desc">Resets everything to a blank state. Cannot be undone.</div></div>
+        <button class="set-btn" id="clearBtn" style="border-color:var(--rose);color:var(--rose)">Clear</button>
+      </div>
+    </div>
+    <div class="blk"><div class="sec"><span class="sn">legal —</span><span class="sl">Privacy Policy</span></div>
+      <div class="privacy-box">
+        <div class="privacy-title">Conjure — Privacy Policy</div>
+        <div class="privacy-date">Last updated: May 2026</div>
+        <div class="privacy-section"><div class="privacy-h">1. Who We Are</div><div class="privacy-p">Conjure is a personal manifestation app designed to support your private practice. We are fully committed to protecting your privacy. This policy explains what data we do and do not collect.</div></div>
+        <div class="privacy-section"><div class="privacy-h">2. What Data We Collect</div><div class="privacy-p">Conjure does not collect, store, or transmit any personal data to our servers. All information you enter — names, journal entries, intentions, notes, and photos — is stored locally on your device only and never leaves it.</div><div class="privacy-p" style="margin-top:7px">The only external communication Conjure makes is when you use AI-powered features. In these cases, the text you have entered is sent to Anthropic's API to generate a response. Anthropic's own privacy policy applies to this communication. We do not store these requests or responses anywhere.</div></div>
+        <div class="privacy-section"><div class="privacy-h">3. Photos</div><div class="privacy-p">If you choose to upload a photo, it is stored exclusively on your device. It is never uploaded, transmitted, or accessible to us or any third party.</div></div>
+        <div class="privacy-section"><div class="privacy-h">4. Analytics</div><div class="privacy-p">We do not use any analytics tools, tracking pixels, or third-party monitoring. We do not know how you use the app, how often you open it, or what features you use.</div></div>
+        <div class="privacy-section"><div class="privacy-h">5. Subscriptions and Payments</div><div class="privacy-p">All payments are processed entirely by Google Play. We do not see, store, or handle your payment details at any point.</div></div>
+        <div class="privacy-section"><div class="privacy-h">6. Children</div><div class="privacy-p">Conjure is intended for users aged 18 and above. We do not knowingly collect data from anyone under 18.</div></div>
+        <div class="privacy-section"><div class="privacy-h">7. Your Rights</div><div class="privacy-p">Since all your data is stored locally on your device, you have complete control at all times. You can export it, clear it, or uninstall the app to remove it entirely. There is no account to delete because we do not create accounts.</div></div>
+        <div class="privacy-section"><div class="privacy-h">8. Contact</div><div class="privacy-p">Questions about this policy: <span style="color:var(--gold)">conjureapp.help@gmail.com</span></div></div>
+        <div class="privacy-footer">Conjure is built with the belief that your private practice deserves complete privacy. Nothing you write here is ever judged, stored, or seen by anyone but you.</div>
+      </div>
+    </div>
+    <div class="blk"><div class="sec"><span class="sn">about —</span><span class="sl">Conjure</span></div>
+      <div class="about-box"><div style="font-size:1.9rem;margin-bottom:11px">🌙</div><div class="about-name">Conjure</div><div class="about-ver">Version 1.0</div><div class="about-tagline">Your specific person manifestation sanctuary</div><div class="about-copy">Made with intention ✦</div></div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+(function(){
+"use strict";
+
+/* ── DATA ── */
+var SIGNS=[
+  {n:"Capricorn",e:"♑",d:"Disciplined and quietly profound — carries weight with grace"},
+  {n:"Aquarius",e:"♒",d:"Visionary and emotionally private — loves in an unmapped way"},
+  {n:"Pisces",e:"♓",d:"Intuitive and deeply empathetic — feels what cannot be spoken"},
+  {n:"Aries",e:"♈",d:"Bold and magnetic — moves first and asks questions later"},
+  {n:"Taurus",e:"♉",d:"Sensual and deeply loyal — loves slowly but completely"},
+  {n:"Gemini",e:"♊",d:"Curious and delightfully layered — two worlds in one person"},
+  {n:"Cancer",e:"♋",d:"Tender and protective — their love is a whole shelter"},
+  {n:"Leo",e:"♌",d:"Radiant and magnetically present — makes every room feel alive"},
+  {n:"Virgo",e:"♍",d:"Precise and profoundly caring — love shows in how they notice everything"},
+  {n:"Libra",e:"♎",d:"Harmonious and quietly passionate — seeks beauty in every connection"},
+  {n:"Scorpio",e:"♏",d:"Intense and transformative — once they love, it rewrites everything"},
+  {n:"Sagittarius",e:"♐",d:"Free and warmly honest — loves through expansion and adventure"}
+];
+var LPM={
+  1:{t:"The Leader",d:"Independent and pioneering — born to forge their own path"},
+  2:{t:"The Diplomat",d:"Sensitive and deeply empathetic — feels everything twice"},
+  3:{t:"The Creator",d:"Expressive and communicative — brings things to life"},
+  4:{t:"The Builder",d:"Disciplined and quietly powerful — creates things that last"},
+  5:{t:"The Adventurer",d:"Free-spirited and versatile — change is their nature"},
+  6:{t:"The Nurturer",d:"Devoted and deeply caring — love is how they live"},
+  7:{t:"The Seeker",d:"Introspective and quietly brilliant — searches below the surface"},
+  8:{t:"The Achiever",d:"Ambitious and magnetic — built to succeed"},
+  9:{t:"The Humanitarian",d:"Compassionate with old-soul depth — here to give"},
+  11:{t:"Master Intuitive",d:"Highly sensitive and spiritually aware"},
+  22:{t:"Master Builder",d:"Immense potential — practical visionary"},
+  33:{t:"Master Teacher",d:"Highest expression of love and compassion"}
+};
+var MOON=[
+  {n:"New Moon",e:"🌑",t:"Set your deepest intentions tonight. New beginnings are ready to be planted."},
+  {n:"Waxing Crescent",e:"🌒",t:"Write your affirmations now — energy is building. Your desires are taking root."},
+  {n:"First Quarter",e:"🌓",t:"Take inspired action. What small step can you take toward your SP today?"},
+  {n:"Waxing Gibbous",e:"🌔",t:"Refine and align. Script the version of reality you most want to step into."},
+  {n:"Full Moon",e:"🌕",t:"The most powerful night for SP rituals. Your energy is at its peak — conjure boldly."},
+  {n:"Waning Gibbous",e:"🌖",t:"Release what blocks you. Write what you are ready to let go of."},
+  {n:"Last Quarter",e:"🌗",t:"Clear the old story. Journal what you want to leave behind."},
+  {n:"Waning Crescent",e:"🌘",t:"Rest and receive. Be open to signs — they are already moving toward you."}
+];
+
+/* ── UTILS ── */
+function qs(id){return document.getElementById(id);}
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function fd(){return new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});}
+function ft(){return new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});}
+
+function getSunSign(dob){
+  var d=new Date(dob);var m=d.getMonth()+1;var day=d.getDate();
+  if((m===12&&day>=22)||(m===1&&day<=19))return SIGNS[0];
+  if((m===1&&day>=20)||(m===2&&day<=18))return SIGNS[1];
+  if((m===2&&day>=19)||(m===3&&day<=20))return SIGNS[2];
+  if((m===3&&day>=21)||(m===4&&day<=19))return SIGNS[3];
+  if((m===4&&day>=20)||(m===5&&day<=20))return SIGNS[4];
+  if((m===5&&day>=21)||(m===6&&day<=20))return SIGNS[5];
+  if((m===6&&day>=21)||(m===7&&day<=22))return SIGNS[6];
+  if((m===7&&day>=23)||(m===8&&day<=22))return SIGNS[7];
+  if((m===8&&day>=23)||(m===9&&day<=22))return SIGNS[8];
+  if((m===9&&day>=23)||(m===10&&day<=22))return SIGNS[9];
+  if((m===10&&day>=23)||(m===11&&day<=21))return SIGNS[10];
+  return SIGNS[11];
+}
+function calcLP(dob){
+  var d=new Date(dob);
+  var digits=(String(d.getFullYear())+String(d.getMonth()+1)+String(d.getDate())).split("").map(Number);
+  var sum=digits.reduce(function(a,b){return a+b;},0);
+  while(sum>9&&sum!==11&&sum!==22&&sum!==33){
+    sum=String(sum).split("").map(Number).reduce(function(a,b){return a+b;},0);
+  }
+  return sum;
+}
+function calcCompat(s1,s2,lp1,lp2){
+  var el={Aries:"fire",Leo:"fire",Sagittarius:"fire",Taurus:"earth",Virgo:"earth",Capricorn:"earth",Gemini:"air",Libra:"air",Aquarius:"air",Cancer:"water",Scorpio:"water",Pisces:"water"};
+  var h={fire:{fire:90,air:82,earth:42,water:55},earth:{earth:88,water:84,fire:44,air:52},air:{air:86,fire:80,water:46,earth:50},water:{water:91,earth:84,air:44,fire:52}};
+  var e1=el[s1]||"water";var e2=el[s2]||"water";
+  var base=(h[e1]&&h[e1][e2])?h[e1][e2]:70;
+  var diff=Math.abs(lp1-lp2);
+  base+=diff<3?8:diff<5?4:0;
+  return Math.min(99,Math.max(52,base));
+}
+function interpCompat(p){return p>=88?"exceptionally aligned":p>=78?"strong natural harmony":p>=68?"complementary energies":"unique and growth-oriented";}
+function calcMoon(){
+  var diff=(new Date()-new Date("2000-01-06"))/(1000*60*60*24);
+  return MOON[Math.floor((diff%29.53)/29.53*8)%8];
+}
+function getGender(){
+  var g=qs("spGender");if(!g)return{sub:"they",obj:"them",pos:"their"};
+  if(g.value==="him")return{sub:"he",obj:"him",pos:"his"};
+  if(g.value==="her")return{sub:"she",obj:"her",pos:"her"};
+  return{sub:"they",obj:"them",pos:"their"};
+}
+
+/* ── STATE ── */
+var journal=[];
+var intentions=[];
+var vbItems=[];
+var curRitual="affirmation";
+var curTone="longing";
+var curMood="";
+var jType="note";
+var curVS="gentle";
+var medTrials=3;
+var medUtt=null;
+var subPlaying=false;
+var audioCtx=null;
+var noiseNode=null;
+var noiseGain=null;
+var masterGain=null;
+var binL=null;
+var binR=null;
+var timerInt=null;
+var elapsed=0;
+var discOn=false;
+
+/* ── PROGRESS BAR ── */
+window.addEventListener("scroll",function(){
+  var el=document.documentElement;
+  qs("pgbar")&&(qs("pgbar").style.width=(el.scrollTop/(el.scrollHeight-el.clientHeight)*100)+"%");
+});
+
+/* ── ONBOARDING ── */
+var obRitual="affirmation";
+function goOb(step){
+  document.querySelectorAll(".ob-slide").forEach(function(s){s.classList.remove("on");});
+  document.querySelectorAll(".ob-dot").forEach(function(d){d.classList.remove("on");});
+  qs("obs"+step).classList.add("on");
+  qs("od"+step).classList.add("on");
+}
+qs("obNext0").addEventListener("click",function(){goOb(1);});
+qs("obNext1").addEventListener("click",function(){
+  var name=qs("obName").value.trim();
+  if(name){
+    qs("spName").value=name;
+    qs("rName").value=name;
+    qs("lSP").value=name;
+    qs("audSP").value=name;
+  }
+  goOb(2);
+});
+qs("obDone").addEventListener("click",function(){
+  document.querySelectorAll("#ritCards .card:not(.locked)").forEach(function(c){c.classList.remove("on");});
+  var match=document.querySelector("#ritCards .card[data-ritual='"+obRitual+"']");
+  if(match){match.classList.add("on");curRitual=obRitual;}
+  var bg=qs("obBg");bg.classList.add("out");
+  setTimeout(function(){bg.style.display="none";},660);
+});
+qs("obSkip").addEventListener("click",function(){
+  var bg=qs("obBg");bg.classList.add("out");
+  setTimeout(function(){bg.style.display="none";},660);
+});
+qs("obRitGrid").addEventListener("click",function(e){
+  var card=e.target.closest(".ob-rcard");if(!card)return;
+  document.querySelectorAll(".ob-rcard").forEach(function(c){c.classList.remove("on");});
+  card.classList.add("on");obRitual=card.getAttribute("data-ritual");
+});
+
+/* ── TABS ── */
+function switchTab(tabId){
+  document.querySelectorAll(".tab").forEach(function(b){b.classList.remove("on");});
+  document.querySelectorAll(".panel").forEach(function(p){p.classList.remove("on");});
+  var btn=document.querySelector(".tab[data-tab='"+tabId+"']");
+  var panel=qs("p-"+tabId);
+  if(btn)btn.classList.add("on");
+  if(panel)panel.classList.add("on");
+  if(tabId==="astro")initAstroPanel();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+qs("tabNav").addEventListener("click",function(e){
+  var btn=e.target.closest(".tab");if(!btn)return;
+  switchTab(btn.getAttribute("data-tab"));
+});
+
+/* ── PHOTO ── */
+qs("photoFrame").addEventListener("click",function(){qs("photoInput").click();});
+qs("photoInput").addEventListener("change",function(e){
+  var file=e.target.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    var img=qs("photoImg");img.src=ev.target.result;img.style.display="block";
+    qs("photoPlus").style.display="none";
+    qs("photoFrame").style.borderColor="var(--gold)";
+    qs("photoFrame").style.boxShadow="0 0 14px var(--gg)";
+  };
+  reader.readAsDataURL(file);
+});
+
+/* ── TAGS ── */
+qs("rTags").addEventListener("click",function(e){
+  if(e.target.classList.contains("tag"))e.target.classList.toggle("on");
+});
+
+/* ── RITUAL CARDS ── */
+qs("ritCards").addEventListener("click",function(e){
+  var card=e.target.closest(".card");if(!card)return;
+  if(card.dataset.prem){openPrem();return;}
+  document.querySelectorAll("#ritCards .card:not(.locked)").forEach(function(c){c.classList.remove("on");});
+  card.classList.add("on");curRitual=card.getAttribute("data-ritual");
+});
+
+/* ── TONE CARDS ── */
+qs("toneCards").addEventListener("click",function(e){
+  var card=e.target.closest(".card");if(!card)return;
+  if(card.dataset.prem){openPrem();return;}
+  document.querySelectorAll("#toneCards .card:not(.locked)").forEach(function(c){c.classList.remove("on");});
+  card.classList.add("on");curTone=card.getAttribute("data-tone");
+});
+
+/* ── MOOD ── */
+document.querySelectorAll(".mbtn").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    var m=btn.getAttribute("data-mood");
+    if(curMood===m){btn.classList.remove("on");curMood="";return;}
+    document.querySelectorAll(".mbtn").forEach(function(b){b.classList.remove("on");});
+    btn.classList.add("on");curMood=m;
+  });
+});
+
+/* ── JOURNAL TYPE ── */
+qs("jtNote").addEventListener("click",function(){
+  jType="note";qs("jtNote").classList.add("on");qs("jtSign").classList.remove("on");
+  qs("jHintNote").style.display="block";qs("jHintSign").style.display="none";
+  qs("jNote").placeholder="What is alive in you right now?\u2026";
+});
+qs("jtSign").addEventListener("click",function(){
+  jType="sign";qs("jtSign").classList.add("on");qs("jtNote").classList.remove("on");
+  qs("jHintNote").style.display="none";qs("jHintSign").style.display="block";
+  qs("jNote").placeholder="What sign did you notice today?\u2026";
+});
+
+/* ── CHAR COUNTS ── */
+function setupCC(inputId,ccId,max){
+  var el=qs(inputId);var cc=qs(ccId);if(!el||!cc)return;
+  el.addEventListener("input",function(){
+    if(el.value.length>max)el.value=el.value.slice(0,max);
+    cc.textContent=el.value.length+" / "+max;
+  });
+}
+setupCC("spMemory","spMemCC",300);
+setupCC("rWish","rWishCC",500);
+setupCC("lHints","lHCC",500);
+setupCC("lNotes","lNCC",500);
+setupCC("jNote","jCC",1000);
+
+/* ── SP NAME SYNC ── */
+qs("spName").addEventListener("input",function(){
+  var v=this.value;
+  if(!qs("rName").dataset.m)qs("rName").value=v;
+  if(!qs("lSP").dataset.m)qs("lSP").value=v;
+  if(!qs("audSP").dataset.m)qs("audSP").value=v;
+});
+["rName","lSP","audSP"].forEach(function(id){qs(id).addEventListener("input",function(){this.dataset.m="1";});});
+
+/* ── SLIDER ── */
+var rFreqEl=qs("rFreq");
+var freqLabels=["How certain does your body feel right now?","Tender... let it be tender.","Soft hope is still hope.","Something is stirring.","It is building.","Halfway between wishing and knowing.","You know it is coming.","Almost certain.","Magnetic. You feel it.","You already know."];
+rFreqEl.addEventListener("input",function(){
+  this.style.setProperty("--pct",((this.value-1)/9*100).toFixed(0)+"%");
+  qs("freqHint").textContent=freqLabels[Math.round((this.value-1)/9*9)];
+});
+rFreqEl.style.setProperty("--pct","70%");
+
+/* ── PROFILE CALCS ── */
+function calcSP(){
+  var dob=qs("spDOB").value;if(!dob)return;
+  var sign=getSunSign(dob);var lp=calcLP(dob);var lpm=LPM[lp]||{t:"Life Path "+lp,d:"A unique vibration"};
+  qs("spSigil").textContent=sign.e;qs("spSignName").textContent=sign.n;qs("spSignDesc").textContent=sign.d;
+  qs("spLP").textContent=lp;qs("spLPd").textContent=lpm.t+" \u2014 "+lpm.d;
+  qs("profDisplay").style.display="block";tryCompat();
+}
+function calcMine(){
+  var dob=qs("myDOB").value;if(!dob)return;
+  var sign=getSunSign(dob);var lp=calcLP(dob);var lpm=LPM[lp]||{t:"Life Path "+lp,d:"A unique vibration"};
+  qs("mySigil").textContent=sign.e;qs("mySignName").textContent=sign.n;qs("mySignDesc").textContent=sign.d;
+  qs("myLP").textContent=lp;qs("myLPd").textContent=lpm.t+" \u2014 "+lpm.d;
+  qs("profDisplay").style.display="block";tryCompat();
+}
+function tryCompat(){
+  var sp=qs("spDOB").value;var me=qs("myDOB").value;if(!sp||!me)return;
+  var ss=getSunSign(sp);var ms=getSunSign(me);
+  var pct=calcCompat(ss.n,ms.n,calcLP(sp),calcLP(me));
+  qs("lpSection").style.display="block";
+  setTimeout(function(){
+    qs("compatBar").style.width=pct+"%";
+    qs("compatPct").textContent=pct+"% resonance \u2014 "+interpCompat(pct);
+  },350);
+}
+qs("spDOB").addEventListener("change",calcSP);
+qs("myDOB").addEventListener("change",calcMine);
+
+/* ── ASTRO PANEL ── */
+function initAstroPanel(){
+  var ph=calcMoon();
+  qs("moonIco").textContent=ph.e;qs("moonNm").textContent=ph.n;qs("moonTip").textContent=ph.t;
+  var sp=qs("spDOB").value;var me=qs("myDOB").value;
+  if(!sp&&!me){qs("astroPromptBox").style.display="block";qs("lpReadings").style.display="none";return;}
+  qs("astroPromptBox").style.display="none";qs("lpReadings").style.display="block";
+  if(sp){
+    var ss=getSunSign(sp);var slp=calcLP(sp);var slpm=LPM[slp]||{t:"Life Path "+slp,d:""};
+    qs("aSpLP").textContent=slp;
+    qs("aSpName").textContent=(qs("spName").value||"Their")+" Life Path";
+    qs("aSpLPd").textContent=slpm.t+" \u2014 "+slpm.d;
+    qs("aSpSigil").textContent=ss.e;qs("aSpSgn").textContent=ss.n;qs("aSpSgnD").textContent=ss.d;
+  }
+  if(me){
+    var ms=getSunSign(me);var mlp=calcLP(me);var mlpm=LPM[mlp]||{t:"Life Path "+mlp,d:""};
+    qs("aMyLP").textContent=mlp;qs("aMyLPd").textContent=mlpm.t+" \u2014 "+mlpm.d;
+    qs("aMySigil").textContent=ms.e;qs("aMySgn").textContent=ms.n;qs("aMySgnD").textContent=ms.d;
+  }
+  if(sp&&me){
+    var ss2=getSunSign(sp);var ms2=getSunSign(me);
+    var pct=calcCompat(ss2.n,ms2.n,calcLP(sp),calcLP(me));
+    setTimeout(function(){
+      qs("aCompatBar").style.width=pct+"%";
+      qs("aCompatPct").textContent=pct+"% resonance \u2014 "+interpCompat(pct);
+    },400);
+  }
+}
+qs("goToProfile").addEventListener("click",function(){switchTab("profile");});
+
+/* ── API ── */
+function callAPI(prompt,maxT){
+  var apiKey=localStorage.getItem("conjure_api_key")||"";
+  if(!apiKey){return Promise.resolve("ERROR: No API key saved. Go to Settings tab and save your key.");}
+  return fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      
+      "anthropic-version":"2023-06-01",
+      "x-api-key":apiKey,"anthropic-dangerous-direct-browser-access":"true"
+    },
+    body:JSON.stringify({model:"claude-3-haiku-20240307",max_tokens:maxT||1000,messages:[{role:"user",content:prompt}]})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.error){return "ERROR: "+d.error.type+" — "+d.error.message;}
+    return (d.content&&d.content.find(function(b){return b.type==="text";})||{}).text||"";
+  }).catch(function(e){return "ERROR connecting to API: "+e.message;});
+}
+
+/* ── TYPEWRITER ── */
+function typeText(text,el,isRose){
+  return new Promise(function(resolve){
+    el.innerHTML="";
+    var cur=document.createElement("span");
+    cur.className="cur"+(isRose?" rose":"");
+    el.appendChild(cur);
+    var lines=text.split("\n");var i=0;
+    function nextLine(){
+      if(i>=lines.length){cur.remove();resolve();return;}
+      var line=lines[i++];
+      if(!line.trim()){el.insertBefore(document.createElement("br"),cur);setTimeout(nextLine,75);return;}
+      var isItalic=line.startsWith("*")&&line.endsWith("*");
+      var isMono=/^(MORNING|MIDDAY|NIGHT)\s*[:/]?$/.test(line.trim());
+      var span=document.createElement(isItalic?"em":"span");
+      if(isMono)span.style.cssText="color:var(--gold);letter-spacing:0.17em;font-size:0.68rem;font-style:normal;font-family:'DM Mono',monospace;display:block;margin:9px 0 2px";
+      var clean=line.replace(/^\*\*?/,"").replace(/\*\*?$/,"");
+      el.insertBefore(span,cur);
+      var ci=0;
+      function nextChar(){
+        if(ci>=clean.length){el.insertBefore(document.createElement("br"),cur);setTimeout(nextLine,55);return;}
+        span.textContent+=clean[ci++];setTimeout(nextChar,11+Math.random()*7);
+      }
+      nextChar();
+    }
+    nextLine();
+  });
+}
+
+/* ── COPY ── */
+function setupCopy(btnId,textId){
+  var btn=qs(btnId);if(!btn)return;
+  btn.addEventListener("click",function(){
+    navigator.clipboard.writeText(qs(textId).innerText).then(function(){
+      var orig=btn.textContent;btn.textContent="Copied \u2736";
+      setTimeout(function(){btn.textContent=orig;},2000);
+    });
+  });
+}
+
+/* ── FLASH ERROR ── */
+function flash(id){
+  var el=qs(id);if(!el)return;el.focus();
+  el.style.borderColor="var(--rose)";el.style.boxShadow="0 0 13px var(--rg)";
+  setTimeout(function(){el.style.borderColor="";el.style.boxShadow="";},1400);
+}
+
+/* ── RITUAL ── */
+function buildRitualPrompt(){
+  var name=qs("rName").value.trim()||"them";
+  var g=getGender();
+  var quals=Array.from(document.querySelectorAll("#rTags .tag.on")).map(function(t){return t.textContent.toLowerCase();});
+  var intent=qs("rIntent").value;
+  var wish=qs("rWish").value.trim();
+  var freq=parseInt(qs("rFreq").value);
+  var freqL=freq>=7?"magnetic, certain, quietly assured":freq>=4?"softly hopeful and emotionally present":"tender, vulnerable, deeply feeling";
+  var imap={reconnect:"reconnecting after silence",deepen:"deepening their bond",attraction:"drawing romantic attraction",communication:"opening natural communication",commitment:"inspiring commitment",healing:"healing the connection",first_move:"inspiring this person to reach out first",clarity:"receiving openness from them"};
+  var rmap={affirmation:"7 present-tense affirmations numbered 1 to 7","369":"three statements labeled exactly MORNING / MIDDAY / NIGHT",scripting:"a scripting letter in first person from a beautiful future, 3 to 5 paragraphs",scene:"a guided visualization in second person, 3 to 4 paragraphs"};
+  var spDOB=qs("spDOB").value;
+  return "You are a manifestation writer — poetic, emotionally intelligent, never generic.\n\nSP name: \""+name+"\"\nSP pronouns: "+g.sub+"/"+g.obj+"/"+g.pos+" — use ONLY these pronouns for this person, never the wrong ones\nSP qualities: "+(quals.length?quals.join(", "):"warm and meaningful")+"\nIntention: "+(imap[intent]||"deepening a meaningful connection")+"\nEmotional frequency: "+freqL+"\n"+(wish?"What they want SP to know: \""+wish+"\"\n":"")+(spDOB?"\nSP sun sign: "+getSunSign(spDOB).n:"")+"\n\nWrite "+rmap[curRitual]+".\n\nRules: use SP name 2 to 3 times; use ONLY "+g.sub+"/"+g.obj+"/"+g.pos+" pronouns for SP; specific and slightly poetic, no platitudes; end with one italicized closing line as a seal; no preamble.";
+}
+
+qs("conjureBtn").addEventListener("click",function(){
+  var name=qs("rName").value.trim();if(!name){flash("rName");return;}
+  var ld=qs("ldR");var out=qs("outR");var block=qs("outRText");
+  out.classList.remove("on");block.innerHTML="";ld.classList.add("on");
+  callAPI(buildRitualPrompt(),1000).then(function(text){
+    ld.classList.remove("on");out.classList.add("on");
+    qs("outRDate").textContent=fd();block.classList.remove("left");
+    return typeText(text,block,false);
+  }).then(function(){
+    qs("outR").scrollIntoView({behavior:"smooth",block:"start"});
+  }).catch(function(){
+    ld.classList.remove("on");out.classList.add("on");
+    block.innerHTML="<em style='opacity:0.38'>Something shifted \u2014 please try again.</em>";
+  });
+});
+setupCopy("copyR","outRText");
+qs("saveR").addEventListener("click",function(){saveToJournal("outRText","ritual",this);});
+qs("resetR").addEventListener("click",function(){qs("outR").classList.remove("on");window.scrollTo({top:0,behavior:"smooth"});});
+
+/* ── SP LETTER ── */
+function buildLetterPrompt(){
+  var sp=qs("lSP").value.trim()||"them";
+  var you=qs("lYou").value.trim()||"you";
+  var g=getGender();
+  var hints=qs("lHints").value.trim();
+  var style=qs("lStyle").value;
+  var length=qs("lLength").value;
+  var notes=qs("lNotes").value.trim();
+  var tmap={longing:"They miss you and can no longer hold it back — aching, honest, tender",devotion:"They are declaring themselves — warm, sure, quietly profound",confession:"They finally say what they have always felt — vulnerable, a little scared, certain"};
+  var smap={poetic:"lyrical and layered",direct:"simple and direct, short sentences",shy:"slightly hesitant, careful",intellectual:"thoughtful precision",warm:"expressive warmth",restrained:"quiet restraint — much implied"};
+  var lenInstr=length==="short"?"Write exactly 2 short paragraphs. Be piercing — every sentence counts.":"Write 4 to 5 paragraphs, intimate and specific.";
+  var spDOB=qs("spDOB").value;
+  return "You are writing a personal love letter from "+sp+" to "+you+".\n\n"+sp+"'s pronouns: "+g.sub+"/"+g.obj+"/"+g.pos+" — use ONLY these for "+sp+" throughout, never mix them.\n\nTone: "+(tmap[curTone]||tmap.longing)+"\n"+(style&&smap[style]?"Voice: "+smap[style]+"\n":"")+(notes?"About "+sp+": "+notes+"\n":"")+(hints?"Weave in naturally: \""+hints+"\"\n":"")+(spDOB?sp+"'s sun sign: "+getSunSign(spDOB).n+"\n":"")+"\n"+lenInstr+"\nBegin with a salutation to "+you+". Close in a way true to "+sp+". Output only the letter.";
+}
+
+qs("letterBtn").addEventListener("click",function(){
+  var sp=qs("lSP").value.trim();var you=qs("lYou").value.trim();
+  if(!sp){flash("lSP");return;}if(!you){flash("lYou");return;}
+  var ld=qs("ldL");var out=qs("outL");var block=qs("outLText");
+  out.classList.remove("on");block.innerHTML="";ld.classList.add("on");
+  callAPI(buildLetterPrompt(),1000).then(function(text){
+    ld.classList.remove("on");out.classList.add("on");
+    qs("outLSP").textContent=sp;qs("outLDate").textContent=fd();
+    block.classList.add("left");return typeText(text,block,true);
+  }).then(function(){
+    qs("outL").scrollIntoView({behavior:"smooth",block:"start"});
+  }).catch(function(){
+    ld.classList.remove("on");out.classList.add("on");
+    block.innerHTML="<em style='opacity:0.38'>Something shifted \u2014 please try again.</em>";
+  });
+});
+setupCopy("copyL","outLText");
+qs("saveL").addEventListener("click",function(){saveToJournal("outLText","letter",this);});
+
+/* ── JOURNAL ── */
+qs("jSaveBtn").addEventListener("click",function(){
+  var text=qs("jNote").value.trim();if(!text)return;
+  journal.unshift({id:Date.now(),date:fd(),time:ft(),mood:curMood,text:text,type:jType});
+  qs("jNote").value="";qs("jCC").textContent="0 / 1000";
+  document.querySelectorAll(".mbtn").forEach(function(b){b.classList.remove("on");});curMood="";
+  renderJournal();
+});
+function saveToJournal(blockId,type,btn){
+  var text=qs(blockId).innerText.trim();if(!text)return;
+  journal.unshift({id:Date.now(),date:fd(),time:ft(),mood:type==="letter"?"\uD83D\uDC8C":"\u2728",text:text.slice(0,600)+(text.length>600?"\u2026":""),type:type});
+  renderJournal();
+  if(btn){var o=btn.textContent;btn.textContent="Saved \u2736";setTimeout(function(){btn.textContent=o;},2000);}
+}
+function renderJournal(){
+  var wrap=qs("jEntries");
+  wrap.querySelectorAll(".jentry").forEach(function(e){e.remove();});
+  if(!journal.length){qs("jEmpty").style.display="block";return;}
+  qs("jEmpty").style.display="none";
+  journal.forEach(function(e){
+    var d=document.createElement("div");
+    d.className="jentry"+(e.type==="letter"||e.type==="meditation"?" isl":"")+(e.type==="sign"?" sign":"");
+    var stag=e.type==="sign"?"<div class='sign-tag'>\u2728 Signs Log</div>":"";
+    var tlbl=e.type!=="journal"&&e.type!=="note"&&e.type!=="sign"?" \u00b7 "+e.type.toUpperCase():"";
+    d.innerHTML="<div class='jmeta'><span class='jdate'>"+e.date+" \u00b7 "+e.time+tlbl+"</span><span class='jmood'>"+(e.mood||"")+"</span></div>"+stag+"<div class='jtext'>"+esc(e.text.length>360?e.text.slice(0,360)+"\u2026":e.text)+"</div><button class='jdel' data-id='"+e.id+"'>\u2715</button>";
+    wrap.appendChild(d);
+  });
+}
+qs("jEntries").addEventListener("click",function(e){
+  if(e.target.classList.contains("jdel")){
+    var id=parseInt(e.target.getAttribute("data-id"));
+    journal=journal.filter(function(x){return x.id!==id;});renderJournal();
+  }
+});
+renderJournal();
+
+/* ── VISION BOARD ── */
+function renderVB(){
+  var g=qs("vbGrid");g.innerHTML="";
+  var total=Math.max(9,vbItems.length+3);
+  for(var i=0;i<total;i++){
+    var cell=document.createElement("div");cell.className="vcell";
+    if(i<vbItems.length){
+      cell.classList.add("filled");
+      var idx=i;
+      cell.innerHTML="<div class='vcell-c'>"+esc(vbItems[idx])+"</div><button class='vdel' data-vi='"+idx+"'>\u2715</button>";
+    } else {
+      cell.innerHTML="<span class='vcell-plus'>+</span>";
+      cell.addEventListener("click",function(){qs("vbInput").focus();});
+    }
+    g.appendChild(cell);
+  }
+}
+qs("vbGrid").addEventListener("click",function(e){
+  if(e.target.classList.contains("vdel")){
+    vbItems.splice(parseInt(e.target.getAttribute("data-vi")),1);renderVB();
+  }
+});
+function vbAdd(){var inp=qs("vbInput");var val=inp.value.trim();if(!val)return;vbItems.push(val);inp.value="";renderVB();}
+qs("vbAddBtn").addEventListener("click",vbAdd);
+qs("vbInput").addEventListener("keydown",function(e){if(e.key==="Enter")vbAdd();});
+qs("vbPremBtn").addEventListener("click",openPrem);
+renderVB();
+
+/* ── TRACKER + CELEBRATION ── */
+function spawnParticles(el){
+  var rect=el.getBoundingClientRect();
+  var cx=rect.left+rect.width/2;var cy=rect.top+rect.height/2;
+  var container=document.createElement("div");
+  container.className="gpc";container.style.cssText="left:0;top:0;width:0;height:0";
+  document.body.appendChild(container);
+  for(var i=0;i<20;i++){
+    var p=document.createElement("div");p.className="gp";
+    var angle=Math.random()*Math.PI*2;var dist=55+Math.random()*85;
+    var tx=Math.cos(angle)*dist;var ty=Math.sin(angle)*dist-38;
+    var size=3+Math.random()*5;var dur=(0.75+Math.random()*0.65).toFixed(2);
+    p.style.cssText="left:"+cx+"px;top:"+cy+"px;width:"+size+"px;height:"+size+"px;background:var(--gold);--tx:"+tx.toFixed(0)+"px;--ty:"+ty.toFixed(0)+"px;--dur:"+dur+"s";
+    container.appendChild(p);
+  }
+  setTimeout(function(){if(container.parentNode)container.parentNode.removeChild(container);},1600);
+}
+
+function showManifestMsg(iitem){
+  var old=iitem.querySelector(".manifest-msg");if(old)old.parentNode.removeChild(old);
+  var msg=document.createElement("div");msg.className="manifest-msg";
+  msg.textContent="you manifested this \u2736";
+  iitem.appendChild(msg);
+  setTimeout(function(){if(msg.parentNode)msg.parentNode.removeChild(msg);},3200);
+}
+
+function addInt(){var inp=qs("intInput");var val=inp.value.trim();if(!val)return;intentions.unshift({id:Date.now(),text:val,date:fd(),done:false});inp.value="";renderTracker();}
+qs("intAddBtn").addEventListener("click",addInt);
+qs("intInput").addEventListener("keydown",function(e){if(e.key==="Enter")addInt();});
+
+qs("intList").addEventListener("click",function(e){
+  var iitem=e.target.closest(".iitem");
+  if(e.target.classList.contains("ichk")&&iitem){
+    var id=parseInt(iitem.getAttribute("data-id"));
+    var x=intentions.find(function(i){return i.id===id;});
+    if(x){
+      var wasDone=x.done;x.done=!x.done;renderTracker();
+      if(!wasDone&&x.done){
+        var newItem=qs("intList").querySelector("[data-id='"+id+"']");
+        if(newItem){spawnParticles(newItem);showManifestMsg(newItem);}
+      }
+    }
+  }
+  if(e.target.classList.contains("idel")){
+    var delId=parseInt(e.target.getAttribute("data-id"));
+    intentions=intentions.filter(function(i){return i.id!==delId;});renderTracker();
+  }
+});
+
+function renderTracker(){
+  var wrap=qs("intList");
+  wrap.querySelectorAll(".iitem").forEach(function(e){e.remove();});
+  var total=intentions.length;var done=intentions.filter(function(i){return i.done;}).length;
+  qs("stTotal").textContent=total;qs("stDone").textContent=done;
+  qs("stPct").textContent=total?Math.round(done/total*100)+"%":"0%";
+  if(!total){qs("intEmpty").style.display="block";return;}
+  qs("intEmpty").style.display="none";
+  intentions.forEach(function(i){
+    var d=document.createElement("div");d.className="iitem"+(i.done?" done":"");d.setAttribute("data-id",i.id);
+    d.innerHTML="<div class='ichk'>"+(i.done?"\u2736":"")+"</div><div class='itxt'>"+esc(i.text)+"</div><div class='idatl'>"+i.date+"</div><button class='idel' data-id='"+i.id+"'>\u2715</button>";
+    wrap.appendChild(d);
+  });
+}
+renderTracker();
+
+/* ── AUDIO ── */
+function initCtx(){
+  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==="suspended")audioCtx.resume();
+  return audioCtx;
+}
+function makeBrownNoise(ctx){
+  var sz=2*ctx.sampleRate;var buf=ctx.createBuffer(1,sz,ctx.sampleRate);
+  var data=buf.getChannelData(0);var last=0;
+  for(var i=0;i<sz;i++){var w=Math.random()*2-1;data[i]=(last+(0.02*w))/1.02;last=data[i];data[i]*=3.5;}
+  var src=ctx.createBufferSource();src.buffer=buf;src.loop=true;return src;
+}
+function startSub(){
+  var ctx=initCtx();
+  masterGain=ctx.createGain();masterGain.gain.value=qs("masterVol").value/100;masterGain.connect(ctx.destination);
+  noiseGain=ctx.createGain();noiseGain.gain.value=0.6;
+  noiseNode=makeBrownNoise(ctx);noiseNode.connect(noiseGain);noiseGain.connect(masterGain);noiseNode.start();
+  subPlaying=true;elapsed=0;
+  qs("mainPlayBtn").textContent="\u23f8";qs("mainPlayBtn").classList.add("playing");
+  qs("mainWave").classList.add("playing");qs("audStatus").textContent="Playing";
+  timerInt=setInterval(function(){
+    elapsed++;
+    qs("timerDisp").textContent=String(Math.floor(elapsed/60)).padStart(2,"0")+":"+String(elapsed%60).padStart(2,"0");
+  },1000);
+}
+function stopSub(){
+  try{if(noiseNode){noiseNode.stop();noiseNode=null;}}catch(e){}
+  if(masterGain){masterGain.disconnect();masterGain=null;}
+  audioCtx=null;subPlaying=false;clearInterval(timerInt);
+  qs("mainPlayBtn").textContent="\u25b6";qs("mainPlayBtn").classList.remove("playing");
+  qs("mainWave").classList.remove("playing");qs("audStatus").textContent="Paused";
+}
+qs("mainPlayBtn").addEventListener("click",function(){if(subPlaying)stopSub();else startSub();});
+qs("masterVol").addEventListener("input",function(){if(masterGain)masterGain.gain.value=this.value/100;});
+qs("lv-noise").addEventListener("input",function(){if(noiseGain)noiseGain.gain.value=this.value/100;});
+qs("unlockLayersBtn").addEventListener("click",openPrem);
+document.querySelectorAll(".bpill").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    document.querySelectorAll(".bpill").forEach(function(b){b.classList.remove("on");});
+    btn.classList.add("on");
+  });
+});
+
+/* ── AI MEDITATION ── */
+function updateTrialBadge(){
+  if(medTrials>0){
+    qs("trialBadge").style.display="inline-flex";
+    qs("trialN").textContent=medTrials;
+  } else {
+    qs("trialBadge").innerHTML="<span style='color:var(--rose)'>Free generations used</span> \u00b7 <span style='cursor:pointer;text-decoration:underline;color:#a08bd0' id='upgLink'>Upgrade to continue</span>";
+    qs("trialBadge").style.borderColor="rgba(176,80,112,0.28)";
+    var ul=qs("upgLink");if(ul)ul.addEventListener("click",openPrem);
+  }
+}
+document.querySelectorAll("#voicePills .vpill").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    document.querySelectorAll("#voicePills .vpill").forEach(function(b){b.classList.remove("on");});
+    btn.classList.add("on");curVS=btn.getAttribute("data-vs");
+  });
+});
+qs("genMedBtn").addEventListener("click",function(){
+  if(medTrials<=0){openPrem();return;}
+  var sp=qs("audSP").value.trim()||"them";
+  var g=getGender();
+  var intent=qs("audIntent").value;
+  var imap={reconnect:"reconnecting with them",attraction:"drawing their attention and heart",heal:"healing whatever sits between you",receive:"receiving their love fully"};
+  var prompt="Write a soft immersive guided meditation for someone manifesting a specific person named \""+sp+"\". "+sp+"'s pronouns are "+g.sub+"/"+g.obj+"/"+g.pos+" — use ONLY these. Theme: "+(imap[intent]||"drawing them closer")+".\n\n3 to 4 paragraphs. Second person. Begin with breath and grounding. Weave in "+sp+"'s name 2 to 3 times. Build to a warm vivid scene of connection. End gently returning to the present.\nTone: "+(curVS==="slow"?"slow, deep, grounding":curVS==="warm"?"warm, loving, intimate":"gentle, soft, nurturing")+". No headers. Just the flowing text.";
+  var ld=qs("ldAud");var out=qs("outAud");var block=qs("outAudText");
+  out.classList.remove("on");block.innerHTML="";ld.classList.add("on");
+  callAPI(prompt,1200).then(function(text){
+    ld.classList.remove("on");out.classList.add("on");medTrials--;updateTrialBadge();
+    return typeText(text,block,false).then(function(){return text;});
+  }).then(function(text){
+    prepMed(text);qs("outAud").scrollIntoView({behavior:"smooth",block:"start"});
+  }).catch(function(){
+    ld.classList.remove("on");out.classList.add("on");
+    block.innerHTML="<em style='opacity:0.38'>Something shifted \u2014 please try again.</em>";
+  });
+});
+function prepMed(text){
+  window.speechSynthesis.cancel();
+  medUtt=new SpeechSynthesisUtterance(text);
+  medUtt.volume=qs("medVol").value/100;medUtt.rate=qs("medRate").value/100;
+  medUtt.pitch=curVS==="slow"?0.85:curVS==="warm"?1.05:0.95;
+  var voices=window.speechSynthesis.getVoices();
+  var pick=voices.find(function(v){return v.lang.startsWith("en-GB");})||voices.find(function(v){return v.lang.startsWith("en");})||voices[0];
+  if(pick)medUtt.voice=pick;
+  medUtt.onstart=function(){qs("medPlayBtn").textContent="\u23f8";qs("medPlayBtn").classList.add("playing");qs("medWave").classList.add("playing");qs("medStatus").textContent="Narrating\u2026";};
+  medUtt.onend=function(){qs("medPlayBtn").textContent="\u25b6";qs("medPlayBtn").classList.remove("playing");qs("medWave").classList.remove("playing");qs("medStatus").textContent="Complete";};
+  medUtt.onpause=function(){qs("medWave").classList.remove("playing");};
+  medUtt.onresume=function(){qs("medWave").classList.add("playing");};
+}
+qs("medPlayBtn").addEventListener("click",function(){
+  if(!medUtt)return;
+  if(window.speechSynthesis.speaking&&!window.speechSynthesis.paused){window.speechSynthesis.pause();qs("medPlayBtn").textContent="\u25b6";qs("medWave").classList.remove("playing");}
+  else if(window.speechSynthesis.paused){window.speechSynthesis.resume();}
+  else{window.speechSynthesis.speak(medUtt);}
+});
+qs("medVol").addEventListener("input",function(){if(medUtt)medUtt.volume=this.value/100;});
+qs("medRate").addEventListener("input",function(){if(medUtt)medUtt.rate=this.value/100;});
+setupCopy("copyAud","outAudText");
+qs("saveAud").addEventListener("click",function(){saveToJournal("outAudText","meditation",this);});
+
+/* ── EXPORT ── */
+// API Key save/load
+(function(){
+  var inp = qs("apiKeyInput");
+  var saved = localStorage.getItem("conjure_api_key")||"";
+  if(saved) inp.value = saved;
+  qs("saveApiKeyBtn").addEventListener("click", function(){
+    var val = inp.value.trim();
+    if(val){ localStorage.setItem("conjure_api_key", val); alert("API key saved! You are ready to use Conjure ✨"); }
+    else { alert("Please enter a key first."); }
+  });
+})();
+
+qs("exportBtn").addEventListener("click",function(){
+  var lines=[];
+  lines.push("CONJURE \u2014 MY DATA EXPORT");
+  lines.push("Exported: "+fd()+" "+ft());
+  lines.push("==========================================");
+  lines.push("");
+  var spn=qs("spName").value.trim();var myn=qs("myName").value.trim();
+  if(spn||myn){
+    lines.push("SP PROFILE");lines.push("----------");
+    if(spn)lines.push("SP Name: "+spn);
+    if(qs("spDOB").value)lines.push("SP Birthdate: "+qs("spDOB").value);
+    if(qs("spGender").value)lines.push("SP Pronouns: "+qs("spGender").value);
+    if(qs("spRel").value)lines.push("Relationship: "+qs("spRel").value);
+    if(qs("spMemory").value.trim())lines.push("Memory/Note: "+qs("spMemory").value.trim());
+    if(myn)lines.push("My Name: "+myn);
+    if(qs("myDOB").value)lines.push("My Birthdate: "+qs("myDOB").value);
+    lines.push("");
+  }
+  if(journal.length){
+    lines.push("JOURNAL ENTRIES ("+journal.length+")");lines.push("----------");
+    journal.forEach(function(e){
+      lines.push("["+e.date+" "+e.time+"] "+(e.type==="sign"?"\u2728 SIGN \u2014 ":e.type==="letter"?"\uD83D\uDC8C LETTER \u2014 ":e.type==="ritual"?"\u2736 RITUAL \u2014 ":e.type==="meditation"?"\uD83C\uDFA7 MEDITATION \u2014 ":"")+(e.mood||""));
+      lines.push(e.text);lines.push("");
+    });
+  }
+  if(intentions.length){
+    lines.push("MANIFESTATION TRACKER ("+intentions.length+")");lines.push("----------");
+    intentions.forEach(function(i){lines.push((i.done?"\u2736 MANIFESTED":"\u25cb Pending")+" \u2014 "+i.text+" (set: "+i.date+")");});
+    lines.push("");
+  }
+  if(vbItems.length){
+    lines.push("VISION BOARD");lines.push("----------");
+    vbItems.forEach(function(v){lines.push("\u2736 "+v);});
+    lines.push("");
+  }
+  lines.push("==========================================");
+  lines.push("This data belongs to you. Made with Conjure.");
+  var blob=new Blob([lines.join("\n")],{type:"text/plain;charset=utf-8"});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement("a");a.href=url;
+  a.download="conjure-data-"+new Date().toISOString().slice(0,10)+".txt";
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);URL.revokeObjectURL(url);
+  var btn=qs("exportBtn");var orig=btn.textContent;
+  btn.textContent="Downloaded \u2736";setTimeout(function(){btn.textContent=orig;},2500);
+});
+
+/* ── CLEAR ALL ── */
+function doFullClear(){
+  journal=[];intentions=[];vbItems=[];
+  renderJournal();renderTracker();renderVB();
+  ["spName","spDOB","spMemory","myName","myDOB","rName","rWish","rIntent","lSP","lYou","lHints","lNotes","lStyle","jNote","vbInput","intInput","audSP"].forEach(function(id){
+    var el=qs(id);if(!el)return;el.value="";el.removeAttribute("data-m");
+  });
+  qs("spMemCC").textContent="0 / 300";qs("rWishCC").textContent="0 / 500";
+  qs("lHCC").textContent="0 / 500";qs("lNCC").textContent="0 / 500";qs("jCC").textContent="0 / 1000";
+  qs("spGender").value="him";qs("spRel").value="";qs("spEnergy").value="";
+  qs("lLength").value="medium";qs("lStyle").value="";qs("audIntent").value="reconnect";
+  qs("profDisplay").style.display="none";qs("lpSection").style.display="none";
+  var img=qs("photoImg");img.src="";img.style.display="none";
+  qs("photoPlus").style.display="block";
+  qs("photoFrame").style.borderColor="";qs("photoFrame").style.boxShadow="";
+  qs("photoInput").value="";
+  document.querySelectorAll("#ritCards .card:not(.locked)").forEach(function(c){c.classList.remove("on");});
+  var fr=document.querySelector("#ritCards .card[data-ritual='affirmation']");if(fr){fr.classList.add("on");curRitual="affirmation";}
+  document.querySelectorAll("#toneCards .card:not(.locked)").forEach(function(c){c.classList.remove("on");});
+  var ft=document.querySelector("#toneCards .card[data-tone='longing']");if(ft){ft.classList.add("on");curTone="longing";}
+  document.querySelectorAll("#rTags .tag.on").forEach(function(t){t.classList.remove("on");});
+  document.querySelectorAll(".mbtn.on").forEach(function(b){b.classList.remove("on");});curMood="";
+  jType="note";qs("jtNote").classList.add("on");qs("jtSign").classList.remove("on");
+  qs("jHintNote").style.display="block";qs("jHintSign").style.display="none";
+  document.querySelectorAll("#voicePills .vpill").forEach(function(b){b.classList.remove("on");});
+  var fv=document.querySelector("#voicePills .vpill[data-vs='gentle']");if(fv){fv.classList.add("on");curVS="gentle";}
+  rFreqEl.value=7;rFreqEl.style.setProperty("--pct","70%");
+  qs("freqHint").textContent="How certain does your body feel right now?";
+  qs("outR").classList.remove("on");qs("outL").classList.remove("on");qs("outAud").classList.remove("on");
+  qs("outRText").innerHTML="";qs("outLText").innerHTML="";qs("outAudText").innerHTML="";
+  medTrials=3;updateTrialBadge();
+  if(subPlaying)stopSub();
+  if(medUtt){window.speechSynthesis.cancel();medUtt=null;}
+  qs("medPlayBtn").textContent="\u25b6";qs("medPlayBtn").classList.remove("playing");
+  qs("medWave").classList.remove("playing");qs("medStatus").textContent="Ready";
+  qs("timerDisp").textContent="00:00";
+  switchTab("profile");
+  var btn=qs("clearBtn");var orig=btn.textContent;
+  btn.textContent="All Clear \u2736";setTimeout(function(){btn.textContent=orig;},2500);
+}
+
+qs("clearBtn").addEventListener("click",function(){qs("confirmBg").classList.add("on");});
+qs("confirmNo").addEventListener("click",function(){qs("confirmBg").classList.remove("on");});
+qs("confirmYes").addEventListener("click",function(){qs("confirmBg").classList.remove("on");doFullClear();});
+qs("confirmBg").addEventListener("click",function(e){if(e.target===this)this.classList.remove("on");});
+
+/* ── THEMES ── */
+var premThemes=["mystic-violet","forest","ocean"];
+qs("themeFab").addEventListener("click",function(e){e.stopPropagation();qs("themePop").classList.toggle("on");});
+document.addEventListener("click",function(e){if(!e.target.closest(".fab-bar"))qs("themePop").classList.remove("on");});
+document.querySelectorAll(".topt").forEach(function(opt){
+  opt.addEventListener("click",function(){
+    var tid=opt.id.replace("t-","");
+    if(premThemes.indexOf(tid)>-1){openPrem();return;}
+    document.body.setAttribute("data-theme",tid);
+    document.querySelectorAll(".topt").forEach(function(o){o.classList.remove("on");});
+    opt.classList.add("on");
+  });
+});
+
+/* ── DISCREET ── */
+qs("discFab").addEventListener("click",function(){
+  discOn=!discOn;
+  qs("discBar").classList.toggle("on",discOn);
+  document.body.style.paddingTop=discOn?"50px":"";
+});
+qs("discExit").addEventListener("click",function(){
+  discOn=false;qs("discBar").classList.remove("on");document.body.style.paddingTop="";
+});
+
+/* ── PREMIUM MODAL ── */
+function openPrem(){qs("premBg").classList.add("on");}
+qs("premClose").addEventListener("click",function(){qs("premBg").classList.remove("on");});
+qs("premBg").addEventListener("click",function(e){if(e.target===this)qs("premBg").classList.remove("on");});
+qs("planM").addEventListener("click",function(){qs("planM").classList.add("on");qs("planY").classList.remove("on");});
+qs("planY").addEventListener("click",function(){qs("planY").classList.add("on");qs("planM").classList.remove("on");});
+qs("synBtn").addEventListener("click",openPrem);
+qs("moonRitBtn").addEventListener("click",openPrem);
+
+/* ── INIT ── */
+(function(){
+  var ph=calcMoon();
+  qs("moonIco").textContent=ph.e;qs("moonNm").textContent=ph.n;qs("moonTip").textContent=ph.t;
+  updateTrialBadge();
+})();
+
+})();
+</script>
+</body>
+</html>
