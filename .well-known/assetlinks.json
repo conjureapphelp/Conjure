@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.conjureapphelp.conjure",
+        "sha256_cert_fingerprints": ["AA:59:C6:1C:4A:63:7D:FA:A8:96:E5:E0:5E:E1:4E:13:D8:C6:57:0F:C0:F6:ED:DD:6E:DD:49:62:81:C2:E0:DC"]
+      }
+    }]
